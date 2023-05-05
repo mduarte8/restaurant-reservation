@@ -2,15 +2,21 @@ const knex = require("../db/connection");
 const tableName = "reservations";
 
 // need to update
-function list(date) {
-  console.log("date in reservations service is", date);
-  console.log("i'm the best");
+async function list(date) {
   if (!date) {
-    return knex(tableName).select("*");
+    return await knex(tableName).select("*").orderBy("reservation_time");
   }
-  return knex(tableName).select("*").where({ reservation_date: date }); // .where({ reservation_id: 1 }).first();
+  return await knex(tableName)
+    .select("*")
+    .where({ reservation_date: date })
+    .orderBy("reservation_time");
+}
+
+async function create(post) {
+  return knex(tableName).insert(post).returning("*");
 }
 
 module.exports = {
   list,
+  create,
 };

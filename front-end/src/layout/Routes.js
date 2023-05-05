@@ -4,6 +4,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
 import NewReservation from "../reservations/NewReservation";
 import NotFound from "./NotFound";
+import useQuery from "../utils/useQuery";
 
 import { today } from "../utils/date-time";
 
@@ -26,6 +27,7 @@ function Routes() {
       <Route exact path="/reservations/new">
         <NewReservation />
       </Route>
+      {/* May need an exact path below */}
       <Route path="/dashboard">
         <Dashboard date={today()} />
       </Route>

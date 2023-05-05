@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useHistory, useLocation } from "react-router-dom";
+import { createReservation } from "../utils/api";
 /**
  * Defines the "Form" page for a new reservation.
  *
@@ -19,10 +20,26 @@ function NewReservation() {
   });
 
   const [error, setError] = useState(null);
+  const [abortController, setAbortController] = useState(null);
+
+  useEffect(() => {
+    return () => {
+      if (abortController) {
+        abortController.abort();
+      }
+    };
+  }, [abortController]);
 
   const handleChange = (event) => {
+    if (event.target.name === "mobile_number") {
+      const input = event.target.value.replace(/\D/g, "");
+      const formatted = `${input.slice(0, 3)}-${input.slice(
+        3,
+        6
+      )}-${input.slice(6, 10)}`;
+      event.target.value = formatted;
+    }
     setFormData({ ...formData, [event.target.name]: event.target.value });
-    console.log(formData);
   };
 
   const validateInputs = () => {
@@ -34,16 +51,23 @@ function NewReservation() {
     return true;
   };
 
+  function createNewReservation(reservationData) {
+    const newAbortController = new AbortController();
+    setAbortController(newAbortController);
+    setError(null);
+    createReservation(reservationData, newAbortController.signal)
+      .then((createdReservation) => {
+        history.push(`/dashboard?date=${formData.reservation_date}`);
+      })
+      .catch((error) => setError(error.message));
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     // to push to database here
     // need to format reservation time using utils/format-reservationtime, as well as reservation-date
     if (validateInputs()) {
-      console.log("yay submit!");
-      console.log(formData.reservation_date);
-      console.log(formData.reservation_time);
-      history.push(`/dashboard?date=${formData.reservation_date}`); // update for reservaiton made
-      setError(null);
+      createNewReservation(formData);
     } else {
       setError("All fields must be filled out.");
     }
@@ -68,9 +92,13 @@ function NewReservation() {
         />
         <input
           name="mobile_number"
+          id="mobile_number"
+          type="tel"
           placeholder="Mobile Number"
+          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
           value={formData.mobile_number}
           onChange={handleChange}
+          required
         />
         <input
           name="reservation_date"

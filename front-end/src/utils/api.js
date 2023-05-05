@@ -29,9 +29,13 @@ headers.append("Content-Type", "application/json");
  *  a promise that resolves to the `json` data or an error.
  *  If the response is not in the 200 - 399 range the promise is rejected.
  */
-async function fetchJson(url, options, onCancel) {
+async function fetchJson(url, options = {}, onCancel) {
   try {
-    const response = await fetch(url, options);
+    const requestOptions = {
+      ...options,
+      headers,
+    };
+    const response = await fetch(url, requestOptions);
 
     if (response.status === 204) {
       return null;
@@ -58,12 +62,26 @@ async function fetchJson(url, options, onCancel) {
  *  a promise that resolves to a possibly empty array of reservation saved in the database.
  */
 
-export async function listReservations(params, signal) {
+async function listReservations(params = {}, signal) {
   const url = new URL(`${API_BASE_URL}/reservations`);
   Object.entries(params).forEach(([key, value]) =>
     url.searchParams.append(key, value.toString())
   );
-  return await fetchJson(url, { headers, signal }, [])
+  return await fetchJson(url, { headers, signal, method: "GET" }, [])
     .then(formatReservationDate)
     .then(formatReservationTime);
 }
+
+async function createReservation(data, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations`);
+  return await fetchJson(url, {
+    headers,
+    signal,
+    method: "POST",
+    body: JSON.stringify({ data }),
+  })
+    .then(formatReservationDate)
+    .then(formatReservationTime);
+}
+
+export { listReservations, createReservation };
