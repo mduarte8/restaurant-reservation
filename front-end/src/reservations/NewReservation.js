@@ -31,15 +31,24 @@ function NewReservation() {
   }, [abortController]);
 
   const handleChange = (event) => {
-    if (event.target.name === "mobile_number") {
-      const input = event.target.value.replace(/\D/g, "");
-      const formatted = `${input.slice(0, 3)}-${input.slice(
-        3,
-        6
-      )}-${input.slice(6, 10)}`;
-      event.target.value = formatted;
+    const { name, value } = event.target;
+    let formattedValue = value;
+
+    if (name === "mobile_number") {
+      const input = value.replace(/\D/g, "");
+      if (input.length <= 3) {
+        formattedValue = input;
+      } else if (input.length <= 6) {
+        formattedValue = `${input.slice(0, 3)}-${input.slice(3)}`;
+      } else {
+        formattedValue = `${input.slice(0, 3)}-${input.slice(
+          3,
+          6
+        )}-${input.slice(6, 10)}`;
+      }
     }
-    setFormData({ ...formData, [event.target.name]: event.target.value });
+
+    setFormData({ ...formData, [name]: formattedValue });
   };
 
   const validateInputs = () => {
@@ -53,13 +62,6 @@ function NewReservation() {
     const reservationDate = new Date(
       `${formData["reservation_date"]}T${formData["reservation_time"]}:00`
     );
-    // console.log("reservationDate is", reservationDate);
-    // console.log("formData[reservaiton_date] is", formData["reservation_date"]);
-    // console.log(
-    //   'formData["reservation_date"]}T${formData["reservation_time"]}:00',
-    //   `${formData["reservation_date"]}T${formData["reservation_time"]}:00`
-    // );
-    // console.log("reservationDate.getDay()", reservationDate.getDay());
     const today = new Date();
     if (reservationDate < today) {
       errorMessages.push(
