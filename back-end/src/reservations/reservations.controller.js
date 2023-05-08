@@ -2,7 +2,7 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const service = require("./reservations.service");
 
 /**
- * Data validation for properties in req body
+ * Data validation for properties in req body, checks to make sure all properties expected are in request body. Defense in depth strategy, should be also validated on frontend.
  */
 
 function bodyDataHas(propertyName) {
@@ -15,6 +15,10 @@ function bodyDataHas(propertyName) {
     next({ status: 400, message: `Must include a valid ${propertyName}` });
   };
 }
+
+/**
+ * Data validation for properties in req body, checks that reservation_date, reservation_time and people are of acceptable format. Defense in depth strategy should come from frontend correctly.
+ */
 
 function bodyDataValid(req, res, next) {
   const { data = {} } = req.body;
@@ -33,16 +37,29 @@ function bodyDataValid(req, res, next) {
       message: `reservation_time must be in the HH:MM format, received ${data["reservation_time"]}`,
     });
   }
-  // console.log("data[people] is", data["people"]);
-  // console.log(typeof data["people"]);
-  // console.log("Num.isInt", Number.isInteger(parseInt(data["people"])));
-  // console.log("less than", data["people"] > 0);
   if (!Number.isInteger(parseInt(data["people"])) || data["people"] <= 0) {
     next({
       status: 400,
       message: `people must be a positive integer, received ${data["people"]}`,
     });
   }
+  const reservationDate = new Date(
+    `${data["reservation_date"]}T${data["reservation_time"]}:00`
+  );
+  const today = new Date();
+  if (reservationDate < today) {
+    next({
+      status: 400,
+      message: `Reservation must be a future date, please select a valid date`,
+    });
+  }
+  if (reservationDate.getDay() === 2) {
+    next({
+      status: 400,
+      message: `Restaurant is closed on tuesdays, select another day`,
+    });
+  }
+
   return next();
 }
 
@@ -58,7 +75,7 @@ async function list(req, res) {
 }
 
 /**
- * List handler for reservation resources
+ * Create handler for new reservation.
  */
 
 async function create(req, res) {

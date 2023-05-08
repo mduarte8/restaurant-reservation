@@ -19,7 +19,7 @@ function NewReservation() {
     people: 1,
   });
 
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState([]);
   const [abortController, setAbortController] = useState(null);
 
   useEffect(() => {
@@ -43,10 +43,37 @@ function NewReservation() {
   };
 
   const validateInputs = () => {
+    let errorMessages = [];
     for (const key in formData) {
       if (formData[key] === "") {
-        return false;
+        errorMessages.push("All fields must be filled out.");
+        // could call which field is empty if desired
       }
+    }
+    const reservationDate = new Date(
+      `${formData["reservation_date"]}T${formData["reservation_time"]}:00`
+    );
+    // console.log("reservationDate is", reservationDate);
+    // console.log("formData[reservaiton_date] is", formData["reservation_date"]);
+    // console.log(
+    //   'formData["reservation_date"]}T${formData["reservation_time"]}:00',
+    //   `${formData["reservation_date"]}T${formData["reservation_time"]}:00`
+    // );
+    // console.log("reservationDate.getDay()", reservationDate.getDay());
+    const today = new Date();
+    if (reservationDate < today) {
+      errorMessages.push(
+        "Reservation Date must be in the future. Please select valid date"
+      );
+    }
+    if (reservationDate.getDay() === 2 /*date is tuesday*/) {
+      errorMessages.push(
+        "Restaurant closed on Tuesdays. Please select another day."
+      );
+    }
+    if (errorMessages.length > 0) {
+      setErrors(errorMessages);
+      return false;
     }
     return true;
   };
@@ -54,29 +81,36 @@ function NewReservation() {
   function createNewReservation(reservationData) {
     const newAbortController = new AbortController();
     setAbortController(newAbortController);
-    setError(null);
+    setErrors([]);
     createReservation(reservationData, newAbortController.signal)
       .then((createdReservation) => {
         history.push(`/dashboard?date=${formData.reservation_date}`);
       })
-      .catch((error) => setError(error.message));
+      .catch((error) => setErrors([error.message]));
   }
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log("errors is", errors);
+    console.log("errors.length is", errors.length);
     // to push to database here
     // need to format reservation time using utils/format-reservationtime, as well as reservation-date
     if (validateInputs()) {
       createNewReservation(formData);
-    } else {
-      setError("All fields must be filled out.");
     }
   };
 
   return (
     <main>
       <h1>This is a new Reservation!</h1>
-      {error && <div className="alert alert-danger">{error}</div>}
+      {errors.length > 0 &&
+        errors.map((error, index) => {
+          return (
+            <div className="alert alert-danger" key={index}>
+              {error}
+            </div>
+          );
+        })}
       <form onSubmit={handleSubmit}>
         <input
           name="first_name"
@@ -103,7 +137,8 @@ function NewReservation() {
         <input
           name="reservation_date"
           type="date"
-          placeholder="Reservation Date"
+          placeholder="YYYY-MM-DD"
+          pattern="\d{4}-\d{2}-\d{2}"
           value={formData.reservation_date}
           onChange={handleChange}
         />
