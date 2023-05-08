@@ -47,6 +47,9 @@ function NewReservation() {
         )}-${input.slice(6, 10)}`;
       }
     }
+    if (name === "people") {
+      formattedValue = parseInt(value);
+    }
 
     setFormData({ ...formData, [name]: formattedValue });
   };
@@ -62,7 +65,14 @@ function NewReservation() {
     const reservationDate = new Date(
       `${formData["reservation_date"]}T${formData["reservation_time"]}:00`
     );
+    const earliestTime = new Date(`${formData["reservation_date"]}T10:30:00`);
+    const latestTime = new Date(`${formData["reservation_date"]}T21:30:00`);
     const today = new Date();
+    if (reservationDate < earliestTime || reservationDate > latestTime) {
+      errorMessages.push(
+        "Reservation Time must be between 10:30 AM and 9:30 PM"
+      );
+    }
     if (reservationDate < today) {
       errorMessages.push(
         "Reservation Date must be in the future. Please select valid date"
@@ -73,6 +83,7 @@ function NewReservation() {
         "Restaurant closed on Tuesdays. Please select another day."
       );
     }
+
     if (errorMessages.length > 0) {
       setErrors(errorMessages);
       return false;

@@ -37,8 +37,7 @@ function bodyDataValid(req, res, next) {
       message: `reservation_time must be in the HH:MM format, received ${data["reservation_time"]}`,
     });
   }
-  // needed to remove parseInt from first conditional, it was taking strings and turning them into ints so passing test when it shouldn't
-  if (!Number.isInteger(data["people"]) || parseInt(data["people"]) <= 0) {
+  if (!Number.isInteger(data["people"]) || data["people"] <= 0) {
     next({
       status: 400,
       message: `people must be a positive integer, received ${data["people"]}`,
