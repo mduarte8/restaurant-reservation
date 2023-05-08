@@ -46,11 +46,20 @@ function bodyDataValid(req, res, next) {
   const reservationDate = new Date(
     `${data["reservation_date"]}T${data["reservation_time"]}:00`
   );
+  const earliestTime = new Date(`${data["reservation_date"]}T10:30:00`);
+  const latestTime = new Date(`${data["reservation_date"]}T21:30:00`);
   const today = new Date();
+  if (reservationDate < earliestTime || reservationDate > latestTime) {
+    next({
+      status: 400,
+      message: "Reservation Time must be between 10:30 AM and 9:30 PM",
+    });
+  }
+
   if (reservationDate < today) {
     next({
       status: 400,
-      message: `Reservation must be a future date, please select a valid date`,
+      message: `Reservation must be a future date and time, please select a valid date`,
     });
   }
   if (reservationDate.getDay() === 2) {
