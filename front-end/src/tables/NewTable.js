@@ -9,6 +9,7 @@ import { createReservation } from "../utils/api";
  */
 
 function NewTable() {
+  const history = useHistory();
   return (
     <main>
       <h1>Hooray new Table!</h1>
@@ -25,7 +26,9 @@ function NewTable() {
         <button type="submit" name="submit">
           Submit
         </button>
-        <button name="cancel">Cancel</button>
+        <button name="cancel" onClick={() => history.goBack()}>
+          Cancel
+        </button>
       </form>
     </main>
   );

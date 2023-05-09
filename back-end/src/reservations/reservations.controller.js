@@ -20,9 +20,8 @@ function bodyDataHas(propertyName) {
  * Data validation for properties in req body, checks that reservation_date, reservation_time and people are of acceptable format. Defense in depth strategy should come from frontend correctly.
  */
 async function reservationExists(req, res, next) {
-  console.log("req.params is", req.params);
-  const { reservation_id } = req.params;
-  console.log("parseInt(reservation_id)", parseInt(reservation_id));
+  const reservation_id =
+    req.params.reservation_id || req.body.data.reservation_id; // checks req.body.data for use in put in tables.controller
   const foundReservation = await service.readReservation(reservation_id);
   if (foundReservation) {
     res.locals.reservation = foundReservation;
@@ -109,7 +108,7 @@ async function create(req, res) {
 }
 
 async function read(req, res) {
-  res.json({ data: res.locals.reservation }); // this may want a status #
+  res.status(200).json({ data: res.locals.reservation }); // this may want a status #
 }
 
 module.exports = {
@@ -125,4 +124,5 @@ module.exports = {
     asyncErrorBoundary(create),
   ],
   read: [asyncErrorBoundary(reservationExists), read],
+  reservationExists,
 };

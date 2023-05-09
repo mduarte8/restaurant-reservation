@@ -72,6 +72,14 @@ async function listReservations(params = {}, signal) {
     .then(formatReservationTime);
 }
 
+async function listTables(params = {}, signal) {
+  const url = new URL(`${API_BASE_URL}/tables`);
+  Object.entries(params).forEach(([key, value]) =>
+    url.searchParams.append(key, value.toString())
+  );
+  return await fetchJson(url, { headers, signal, method: "GET" }, []);
+}
+
 async function createReservation(data, signal) {
   const url = new URL(`${API_BASE_URL}/reservations`);
   return await fetchJson(url, {
@@ -84,4 +92,4 @@ async function createReservation(data, signal) {
     .then(formatReservationTime);
 }
 
-export { listReservations, createReservation };
+export { listReservations, createReservation, listTables };

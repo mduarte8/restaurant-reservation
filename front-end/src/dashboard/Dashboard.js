@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listReservations } from "../utils/api";
+import { listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import useQuery from "../utils/useQuery";
 import { useLocation, Link } from "react-router-dom/cjs/react-router-dom.min";
@@ -15,6 +15,8 @@ function Dashboard() {
   const [dateString, setDateString] = useState(today());
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
+  const [tables, setTables] = useState([]);
+  const [tablesError, setTablesError] = useState(null);
 
   console.log("passed in dateString is", dateString);
 
@@ -48,6 +50,9 @@ function Dashboard() {
     listReservations({ date: dateString }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
+    listTables({}, abortController.signal)
+      .then(setTables)
+      .catch(setTablesError);
     return () => abortController.abort();
   }
   // console.log(reservations);
@@ -79,9 +84,61 @@ function Dashboard() {
       <ErrorAlert error={reservationsError} />
       {/* this code below needs to change */}
       {reservations && reservations.length ? (
-        JSON.stringify(reservations)
+        // JSON.stringify(reservations)
+        <table>
+          <tr>
+            <th>Reservation ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Phone #</th>
+            <th>Reservation Date</th>
+            <th>Reservation Time</th>
+            <th>Party Size</th>
+            <th>Seat</th>
+          </tr>
+          {reservations.map((reservation) => {
+            return (
+              <tr>
+                <td>{reservation.reservation_id}</td>
+                <td>{reservation.first_name}</td>
+                <td>{reservation.last_name}</td>
+                <td>{reservation.mobile_number}</td>
+                <td>{reservation.reservation_date}</td>
+                <td>{reservation.reservation_time}</td>
+                <td>{reservation.people}</td>
+                <td>
+                  <button>Seat</button>
+                </td>
+              </tr>
+            );
+          })}
+        </table>
       ) : (
         <p>No Reservations for {dateString}</p>
+      )}
+      <ErrorAlert error={tablesError} />
+      {tables && tables.length ? (
+        // JSON.stringify(tables)
+        <table>
+          <tr>
+            <th>Table Id</th>
+            <th>Table Name</th>
+            <th>Capacity</th>
+            <th>Availability</th>
+          </tr>
+          {tables.map((table) => {
+            return (
+              <tr>
+                <td>{table.table_id}</td>
+                <td>{table.table_name}</td>
+                <td>{table.capacity}</td>
+                <td>{!table.reservation_id ? "Open" : "Occupied"}</td>
+              </tr>
+            );
+          })}
+        </table>
+      ) : (
+        <p>No tables :/</p>
       )}
     </main>
   );

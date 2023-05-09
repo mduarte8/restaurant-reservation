@@ -16,11 +16,8 @@ async function create(post) {
   return knex(tableName).insert(post).returning("*");
 }
 
-async function readReservation(reservationId) {
-  const response = await knex(tableName)
-    .select("*")
-    .where("reservation_id", reservationId);
-  console.log("response in service is", response);
+async function readReservation(reservation_id) {
+  const response = await knex(tableName).select("*").where({ reservation_id });
   return response[0];
 }
 
