@@ -66,19 +66,16 @@ function NewTable() {
     setErrors([]);
     createTable(tableData, newAbortController.signal)
       .then((createdTable) => {
-        history.push(`/dashboard`);
+        history.push(`/dashboard`); // need to wait for table to be created and promise to resolve
       })
       .catch((error) => setErrors([error.message]));
   }
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // console.log("errors is", errors);
-    // console.log("errors.length is", errors.length);
-    // to push to database here
-    // need to format reservation time using utils/format-reservationtime, as well as reservation-date
+
     if (validateInputs()) {
-      createNewTable(formData);
+      createNewTable(formData); // history.push('/dashboard') included in createTable function to chain then and account for async and promise
     }
   };
 

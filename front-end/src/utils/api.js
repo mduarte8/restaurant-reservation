@@ -111,10 +111,22 @@ async function createTable(data, signal) {
   });
 }
 
+//"/:table_id/seat"
+async function seatTable(table_id, reservation_id, signal) {
+  const url = new URL(`${API_BASE_URL}/tables/${table_id}/seat`);
+  return await fetchJson(url, {
+    headers,
+    signal,
+    method: "PUT",
+    body: JSON.stringify({ data: { reservation_id } }),
+  });
+}
+
 export {
   listReservations,
   readReservation,
   createReservation,
   listTables,
   createTable,
+  seatTable,
 };

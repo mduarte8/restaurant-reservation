@@ -86,37 +86,41 @@ function Dashboard() {
       {reservations && reservations.length ? (
         // JSON.stringify(reservations)
         <table>
-          <tr>
-            <th>Reservation ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Phone #</th>
-            <th>Reservation Date</th>
-            <th>Reservation Time</th>
-            <th>Party Size</th>
-            <th>Seat</th>
-          </tr>
-          {reservations.map((reservation, index) => {
-            return (
-              <tr key={index}>
-                <td>{reservation.reservation_id}</td>
-                <td>{reservation.first_name}</td>
-                <td>{reservation.last_name}</td>
-                <td>{reservation.mobile_number}</td>
-                <td>{reservation.reservation_date}</td>
-                <td>{reservation.reservation_time}</td>
-                <td>{reservation.people}</td>
-                <td>
-                  <a
-                    className="btn btn-secondary"
-                    href={`/reservations/${reservation.reservation_id}/seat`}
-                  >
-                    Seat
-                  </a>
-                </td>
-              </tr>
-            );
-          })}
+          <thead>
+            <tr>
+              <th>Reservation ID</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Phone #</th>
+              <th>Reservation Date</th>
+              <th>Reservation Time</th>
+              <th>Party Size</th>
+              <th>Seat</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reservations.map((reservation, index) => {
+              return (
+                <tr key={index}>
+                  <td>{reservation.reservation_id}</td>
+                  <td>{reservation.first_name}</td>
+                  <td>{reservation.last_name}</td>
+                  <td>{reservation.mobile_number}</td>
+                  <td>{reservation.reservation_date}</td>
+                  <td>{reservation.reservation_time}</td>
+                  <td>{reservation.people}</td>
+                  <td>
+                    <a
+                      className="btn btn-secondary"
+                      href={`/reservations/${reservation.reservation_id}/seat`}
+                    >
+                      Seat
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
         </table>
       ) : (
         <p>No Reservations for {dateString}</p>
@@ -125,22 +129,26 @@ function Dashboard() {
       {tables && tables.length ? (
         // JSON.stringify(tables)
         <table>
-          <tr>
-            <th>Table Id</th>
-            <th>Table Name</th>
-            <th>Capacity</th>
-            <th>Availability</th>
-          </tr>
-          {tables.map((table, index) => {
-            return (
-              <tr key={index}>
-                <td>{table.table_id}</td>
-                <td>{table.table_name}</td>
-                <td>{table.capacity}</td>
-                <td>{!table.reservation_id ? "Open" : "Occupied"}</td>
-              </tr>
-            );
-          })}
+          <thead>
+            <tr>
+              <th>Table Id</th>
+              <th>Table Name</th>
+              <th>Capacity</th>
+              <th>Availability</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tables.map((table, index) => {
+              return (
+                <tr key={index}>
+                  <td>{table.table_id}</td>
+                  <td>{table.table_name}</td>
+                  <td>{table.capacity}</td>
+                  <td>{!table.reservation_id ? "Open" : "Occupied"}</td>
+                </tr>
+              );
+            })}
+          </tbody>
         </table>
       ) : (
         <p>No tables :/</p>

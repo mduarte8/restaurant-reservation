@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useHistory, useLocation, useParams } from "react-router-dom";
-import { readReservation, listTables } from "../utils/api";
+import { readReservation, listTables, seatTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 /**
  * Defines the page for to seat a reservation.
@@ -20,9 +20,7 @@ function ManageReservation() {
   const [reservationError, setReservationError] = useState(null);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
-  const [slectedTable, setSelectedTable] = useState({
-    table_id: null,
-  });
+  const [selectedTable, setSelectedTable] = useState(null);
 
   useEffect(() => {
     return () => {
@@ -31,12 +29,6 @@ function ManageReservation() {
       }
     };
   }, [abortController]);
-
-  //   const [dateString, setDateString] = useState(today());
-
-  //   console.log("passed in dateString is", dateString);
-
-  //   const queryDateString = query.get("date");
 
   useEffect(loadManageReservation, [reservation_id]);
 
@@ -49,29 +41,59 @@ function ManageReservation() {
       .then(setReservation)
       .catch(setReservationError);
     listTables({}, abortController.signal)
-      .then(setTables)
+      .then((tables) => {
+        setTables(tables);
+        if (tables.length > 0) {
+          setSelectedTable(tables[0].table_id);
+        }
+      })
       .catch(setTablesError);
     return () => abortController.abort();
   }
 
   const handleChange = (event) => {
     const { value } = event.target;
-    console.log("event.target is", event.target);
-    console.log("value is", value);
     let formattedTableId = parseInt(value); // take table_id from value of option, force it to be type int
-    console.log("formattedTableId is", formattedTableId);
-    setSelectedTable({ table_id: formattedTableId });
+    setSelectedTable(formattedTableId);
   };
+
+  function validateInputs(table) {
+    let errorMessages = [];
+    if (table.capacity < reservation.people) {
+      errorMessages.push(
+        "table capacity smaller than party size. Choose another table"
+      );
+      return false;
+    }
+    return true;
+  }
+
+  function seatReservationAtTable(table) {
+    const newAbortController = new AbortController();
+    setAbortController(newAbortController);
+    setErrors([]);
+    setReservationError(null);
+    setTablesError(null);
+    seatTable(table.table_id, reservation_id, newAbortController.signal)
+      .then((seatedTable) => {
+        history.push("/dashboard");
+      })
+      .catch((error) => setErrors([error.message]));
+
+    // createTable(tableData, newAbortController.signal)
+    //   .then((createdTable) => {
+    //     history.push(`/dashboard`); // need to wait for table to be created and promise to resolve
+    //   })
+    //   .catch((error) => setErrors([error.message]));
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // console.log("errors is", errors);
-    // console.log("errors.length is", errors.length);
-    // to push to database here
-    // need to format reservation time using utils/format-reservationtime, as well as reservation-date
-    // if (validateInputs()) {
-    //   createNewTable(formData);
-    // }
+    const submitErrors = [];
+    const foundTable = tables.find((table) => table.table_id === selectedTable);
+    if (validateInputs(foundTable)) {
+      seatReservationAtTable(foundTable);
+    }
   };
 
   return (
@@ -89,24 +111,28 @@ function ManageReservation() {
       {reservation ? (
         // JSON.stringify(reservations)
         <table>
-          <tr>
-            <th>Reservation ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Phone #</th>
-            <th>Reservation Date</th>
-            <th>Reservation Time</th>
-            <th>Party Size</th>
-          </tr>
-          <tr>
-            <td>{reservation.reservation_id}</td>
-            <td>{reservation.first_name}</td>
-            <td>{reservation.last_name}</td>
-            <td>{reservation.mobile_number}</td>
-            <td>{reservation.reservation_date}</td>
-            <td>{reservation.reservation_time}</td>
-            <td>{reservation.people}</td>
-          </tr>
+          <thead>
+            <tr>
+              <th>Reservation ID</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Phone #</th>
+              <th>Reservation Date</th>
+              <th>Reservation Time</th>
+              <th>Party Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{reservation.reservation_id}</td>
+              <td>{reservation.first_name}</td>
+              <td>{reservation.last_name}</td>
+              <td>{reservation.mobile_number}</td>
+              <td>{reservation.reservation_date}</td>
+              <td>{reservation.reservation_time}</td>
+              <td>{reservation.people}</td>
+            </tr>
+          </tbody>
         </table>
       ) : (
         <p>No Reservations for {reservation_id}</p>
@@ -132,6 +158,7 @@ function ManageReservation() {
         // JSON.stringify(tables)
         <form onSubmit={handleSubmit}>
           <select name="table_id" onChange={handleChange}>
+            {/* <option value="">Select a table</option> */}
             {tables.map((table, index) => {
               return (
                 //   <tr key={index}>
@@ -140,13 +167,14 @@ function ManageReservation() {
                 //     <td>{table.capacity}</td>
                 //     <td>{!table.reservation_id ? "Open" : "Occupied"}</td>
                 //   </tr>
-                <option value={table.table_id}>
-                  {table.table_name} - {table.capacity} from {table.table_id}
+                <option value={table.table_id} key={table.table_id}>
+                  {table.table_name} - {table.capacity}
                 </option>
               );
             })}
           </select>
           <button type="submit">Submit</button>
+          <button onClick={() => history.goBack()}>Cancel</button>
         </form>
       ) : (
         <p>No tables :/</p>
