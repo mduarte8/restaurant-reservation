@@ -119,7 +119,7 @@ function NewReservation() {
       {errors.length > 0 &&
         errors.map((error, index) => {
           return (
-            <div className="alert alert-danger" key={index}>
+            <div className="alert alert-danger m-2" key={index}>
               {error}
             </div>
           );

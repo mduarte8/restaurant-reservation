@@ -96,9 +96,9 @@ function Dashboard() {
             <th>Party Size</th>
             <th>Seat</th>
           </tr>
-          {reservations.map((reservation) => {
+          {reservations.map((reservation, index) => {
             return (
-              <tr>
+              <tr key={index}>
                 <td>{reservation.reservation_id}</td>
                 <td>{reservation.first_name}</td>
                 <td>{reservation.last_name}</td>
@@ -107,7 +107,12 @@ function Dashboard() {
                 <td>{reservation.reservation_time}</td>
                 <td>{reservation.people}</td>
                 <td>
-                  <button>Seat</button>
+                  <a
+                    className="btn btn-secondary"
+                    href={`/reservations/${reservation.reservation_id}/seat`}
+                  >
+                    Seat
+                  </a>
                 </td>
               </tr>
             );
@@ -126,9 +131,9 @@ function Dashboard() {
             <th>Capacity</th>
             <th>Availability</th>
           </tr>
-          {tables.map((table) => {
+          {tables.map((table, index) => {
             return (
-              <tr>
+              <tr key={index}>
                 <td>{table.table_id}</td>
                 <td>{table.table_name}</td>
                 <td>{table.capacity}</td>
