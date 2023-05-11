@@ -22,9 +22,17 @@ async function seat(reservation_id, table_id) {
     .returning("*");
 }
 
+async function unseat(table_id) {
+  return knex(tableName)
+    .where({ table_id })
+    .update({ reservation_id: null })
+    .returning("*");
+}
+
 module.exports = {
   list,
   createTable,
   read,
   seat,
+  unseat,
 };

@@ -12,7 +12,7 @@ async function tableExists(req, res, next) {
     return next();
   }
   next({
-    status: 400,
+    status: 404,
     message: `table_id ${table_id} not found`,
   });
 }
@@ -63,6 +63,16 @@ function tableIsValid(req, res, next) {
   return next();
 }
 
+function tableIsOccupied(req, res, next) {
+  if (!res.locals.table.reservation_id) {
+    next({
+      status: 400,
+      message: `Cannot unseat table ${res.locals.table.table_id} as it is not occupied with reservation`,
+    });
+  }
+  return next();
+}
+
 async function list(req, res) {
   // const { date } = req.query;
   const data = await service.list();
@@ -88,6 +98,13 @@ async function seat(req, res) {
   });
 }
 
+async function destroy(req, res) {
+  const unseatedTable = await service.unseat(res.locals.table.table_id);
+  res.status(200).json({
+    data: unseatedTable[0],
+  });
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [
@@ -101,6 +118,11 @@ module.exports = {
     asyncErrorBoundary(tableExists),
     asyncErrorBoundary(reservationExists),
     tableIsValid,
-    seat,
+    asyncErrorBoundary(seat),
+  ],
+  delete: [
+    asyncErrorBoundary(tableExists),
+    tableIsOccupied,
+    asyncErrorBoundary(destroy),
   ],
 };
