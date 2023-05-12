@@ -14,19 +14,34 @@ async function createTable(post) {
 }
 
 async function seat(reservation_id, table_id) {
-  return knex(tableName)
-    .where({ table_id })
-    .update({
-      reservation_id,
-    })
-    .returning("*");
+  // could use try catch block for error in the await syntax if needed
+  return await knex.transaction(async (trx) => {
+    const updatedTable = await trx(tableName)
+      .where({ table_id })
+      .update({ reservation_id })
+      .returning("*");
+
+    await trx("reservations")
+      .where({ reservation_id })
+      .update({ status: "seated" });
+    return updatedTable;
+  });
 }
 
-async function unseat(table_id) {
-  return knex(tableName)
-    .where({ table_id })
-    .update({ reservation_id: null })
-    .returning("*");
+async function unseat(reservation_id, table_id) {
+  // could use try catch block for error in the await syntax if needed
+  return await knex.transaction(async (trx) => {
+    await trx("reservations")
+      .where({ reservation_id })
+      .update({ status: "finished" });
+
+    const updatedTable = await trx(tableName)
+      .where({ table_id })
+      .update({ reservation_id: null })
+      .returning("*");
+
+    return updatedTable;
+  });
 }
 
 module.exports = {

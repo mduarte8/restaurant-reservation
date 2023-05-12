@@ -22,6 +22,8 @@ function bodyDataHas(propertyName) {
 async function reservationExists(req, res, next) {
   const reservation_id =
     req.params.reservation_id || req.body.data.reservation_id; // checks req.body.data for use in put in tables.controller
+  // console.log("looking for reservation_id", reservation_id);
+  // console.log("status is", req.body.data.status);
   const foundReservation = await service.readReservation(reservation_id);
   if (foundReservation) {
     res.locals.reservation = foundReservation;
@@ -81,7 +83,30 @@ function bodyDataValid(req, res, next) {
       message: `Restaurant is closed on tuesdays, select another day`,
     });
   }
+  if (data["status"] !== "booked") {
+    next({
+      status: 400,
+      message: `Reservation can't be seated or finished`,
+    });
+  }
 
+  return next();
+}
+
+function statusIsValid(req, res, next) {
+  const validStatuses = ["booked", "seated", "finished"];
+  if (res.locals.reservation.status === "finished") {
+    next({
+      status: 400,
+      message: `finished reservation cannot be updated`,
+    });
+  }
+  if (!validStatuses.includes(req.body.data.status)) {
+    next({
+      status: 400,
+      message: `unknown status ${res.locals.reservation.status}`,
+    });
+  }
   return next();
 }
 
@@ -111,6 +136,13 @@ async function read(req, res) {
   res.status(200).json({ data: res.locals.reservation }); // this may want a status #
 }
 
+async function updateStatus(req, res) {
+  const { reservation_id } = res.locals.reservation;
+  const { status } = req.body.data;
+  const updatedReservation = await service.updateStatus(reservation_id, status);
+  res.status(200).json({ data: { status: updatedReservation[0].status } });
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [
@@ -120,9 +152,16 @@ module.exports = {
     bodyDataHas("reservation_date"),
     bodyDataHas("reservation_time"),
     bodyDataHas("people"),
+    bodyDataHas("status"),
     bodyDataValid,
     asyncErrorBoundary(create),
   ],
-  read: [asyncErrorBoundary(reservationExists), read],
-  reservationExists,
+  read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
+  reservationExists: asyncErrorBoundary(reservationExists),
+  updateStatus: [
+    asyncErrorBoundary(reservationExists),
+    bodyDataHas("status"),
+    statusIsValid,
+    asyncErrorBoundary(updateStatus),
+  ],
 };

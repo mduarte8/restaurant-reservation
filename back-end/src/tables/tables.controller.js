@@ -73,6 +73,23 @@ function tableIsOccupied(req, res, next) {
   return next();
 }
 
+function canSeatReservation(req, res, next) {
+  const currentReservationStatus = res.locals.reservation.status;
+  if (currentReservationStatus === "seated") {
+    next({
+      status: 400,
+      message: `Cannot re-seat reservation ${res.locals.reservation.reservation_id}, as it is already seated`,
+    });
+  }
+  if (currentReservationStatus === "finished") {
+    next({
+      status: 400,
+      message: `Cannot seat seat reservation ${res.locals.reservation.reservation_id} as it is already finished`,
+    });
+  }
+  return next();
+}
+
 async function list(req, res) {
   // const { date } = req.query;
   const data = await service.list();
@@ -99,7 +116,10 @@ async function seat(req, res) {
 }
 
 async function destroy(req, res) {
-  const unseatedTable = await service.unseat(res.locals.table.table_id);
+  const unseatedTable = await service.unseat(
+    res.locals.table.reservation_id,
+    res.locals.table.table_id
+  );
   res.status(200).json({
     data: unseatedTable[0],
   });
@@ -118,6 +138,7 @@ module.exports = {
     asyncErrorBoundary(tableExists),
     asyncErrorBoundary(reservationExists),
     tableIsValid,
+    canSeatReservation,
     asyncErrorBoundary(seat),
   ],
   delete: [

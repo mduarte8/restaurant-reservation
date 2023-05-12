@@ -9,6 +9,7 @@ async function list(date) {
   return knex(tableName)
     .select("*")
     .where({ reservation_date: date })
+    .whereNot("status", "finished")
     .orderBy("reservation_time");
 }
 
@@ -21,8 +22,17 @@ async function readReservation(reservation_id) {
   return response[0];
 }
 
+async function updateStatus(reservation_id, status) {
+  const response = await knex(tableName)
+    .where({ reservation_id })
+    .update({ status })
+    .returning("*");
+  return response;
+}
+
 module.exports = {
   list,
   create,
   readReservation,
+  updateStatus,
 };
