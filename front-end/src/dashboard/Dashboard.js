@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listReservations, listTables } from "../utils/api";
+import { listReservations, listTables, unseatTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import useQuery from "../utils/useQuery";
 import { useLocation, Link } from "react-router-dom/cjs/react-router-dom.min";
@@ -17,8 +17,10 @@ function Dashboard() {
   const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
+  const [reload, setReload] = useState(false);
+  const [abortController, setAbortController] = useState(null);
 
-  console.log("passed in dateString is", dateString);
+  // console.log("passed in dateString is", dateString);
 
   const location = useLocation();
   const query = useQuery();
@@ -30,18 +32,7 @@ function Dashboard() {
     }
   }, [queryDateString]);
 
-  console.log("queryDateString is", queryDateString);
-  // if (queryDateString) {
-  //   dateString = queryDateString;
-  // }
-  console.log("dateString is now", dateString);
-  // } else {
-  //   date = "2020-12-31";
-  // }
-  // if (!dateString) dateString = today();
-  console.log("today is", today());
-  console.log("dateString is now after check", dateString);
-  useEffect(loadDashboard, [dateString]);
+  useEffect(loadDashboard, [dateString, reload]);
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -56,6 +47,23 @@ function Dashboard() {
     return () => abortController.abort();
   }
   // console.log(reservations);
+
+  function handleFinish(table_id) {
+    if (
+      window.confirm(
+        " Is this table ready to seat new guests? This cannot be undone."
+      )
+    ) {
+      const newAbortController = new AbortController();
+      setAbortController(newAbortController);
+      setTablesError(null);
+      unseatTable(table_id, newAbortController.signal)
+        .then(() => setReload(!reload))
+        .catch((error) => {
+          setTablesError(error);
+        });
+    }
+  }
 
   return (
     <main>
@@ -135,6 +143,7 @@ function Dashboard() {
               <th>Table Name</th>
               <th>Capacity</th>
               <th>Availability</th>
+              <th>End?</th>
             </tr>
           </thead>
           <tbody>
@@ -144,7 +153,21 @@ function Dashboard() {
                   <td>{table.table_id}</td>
                   <td>{table.table_name}</td>
                   <td>{table.capacity}</td>
-                  <td>{!table.reservation_id ? "Open" : "Occupied"}</td>
+                  <td data-table-id-status={table.table_id}>
+                    {!table.reservation_id ? "free" : "occupied"}
+                  </td>
+                  <td>
+                    {!table.reservation_id ? (
+                      ""
+                    ) : (
+                      <button
+                        data-table-id-finish={table.table_id}
+                        onClick={() => handleFinish(table.table_id)}
+                      >
+                        Finish
+                      </button>
+                    )}
+                  </td>
                 </tr>
               );
             })}

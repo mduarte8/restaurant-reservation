@@ -122,6 +122,16 @@ async function seatTable(table_id, reservation_id, signal) {
   });
 }
 
+async function unseatTable(table_id, signal) {
+  const url = new URL(`${API_BASE_URL}/tables/${table_id}/seat`);
+  return await fetchJson(url, {
+    headers,
+    signal,
+    method: "DELETE",
+    body: JSON.stringify({ data: null }),
+  });
+}
+
 export {
   listReservations,
   readReservation,
@@ -129,4 +139,5 @@ export {
   listTables,
   createTable,
   seatTable,
+  unseatTable,
 };
