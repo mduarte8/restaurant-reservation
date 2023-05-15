@@ -4,6 +4,7 @@ import ErrorAlert from "../layout/ErrorAlert";
 import useQuery from "../utils/useQuery";
 import { useLocation, Link } from "react-router-dom/cjs/react-router-dom.min";
 import { today, previous, next } from "../utils/date-time";
+import ReservationList from "../reservations/ReservationList";
 
 /**
  * Defines the dashboard page.
@@ -92,55 +93,56 @@ function Dashboard() {
       <ErrorAlert error={reservationsError} />
       {/* this code below needs to change */}
       {reservations && reservations.length ? (
-        // JSON.stringify(reservations)
-        <table>
-          <thead>
-            <tr>
-              <th>Reservation ID</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Phone #</th>
-              <th>Reservation Date</th>
-              <th>Reservation Time</th>
-              <th>Party Size</th>
-              <th>Status</th>
-              <th>Seat</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reservations.map((reservation, index) => {
-              return (
-                <tr key={index}>
-                  <td>{reservation.reservation_id}</td>
-                  <td>{reservation.first_name}</td>
-                  <td>{reservation.last_name}</td>
-                  <td>{reservation.mobile_number}</td>
-                  <td>{reservation.reservation_date}</td>
-                  <td>{reservation.reservation_time}</td>
-                  <td>{reservation.people}</td>
-                  <td
-                    data-reservation-id-status={`${reservation.reservation_id}`}
-                  >
-                    {reservation.status}
-                  </td>
-                  <td>
-                    {reservation.status === "seated" ? (
-                      ""
-                    ) : (
-                      <a
-                        className="btn btn-secondary"
-                        href={`/reservations/${reservation.reservation_id}/seat`}
-                      >
-                        Seat
-                      </a>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <ReservationList reservations={reservations} />
       ) : (
+        // JSON.stringify(reservations)
+        // <table>
+        //   <thead>
+        //     <tr>
+        //       <th>Reservation ID</th>
+        //       <th>First Name</th>
+        //       <th>Last Name</th>
+        //       <th>Phone #</th>
+        //       <th>Reservation Date</th>
+        //       <th>Reservation Time</th>
+        //       <th>Party Size</th>
+        //       <th>Status</th>
+        //       <th>Seat</th>
+        //     </tr>
+        //   </thead>
+        //   <tbody>
+        //     {reservations.map((reservation, index) => {
+        //       return (
+        //         <tr key={index}>
+        //           <td>{reservation.reservation_id}</td>
+        //           <td>{reservation.first_name}</td>
+        //           <td>{reservation.last_name}</td>
+        //           <td>{reservation.mobile_number}</td>
+        //           <td>{reservation.reservation_date}</td>
+        //           <td>{reservation.reservation_time}</td>
+        //           <td>{reservation.people}</td>
+        //           <td
+        //             data-reservation-id-status={`${reservation.reservation_id}`}
+        //           >
+        //             {reservation.status}
+        //           </td>
+        //           <td>
+        //             {reservation.status === "seated" ? (
+        //               ""
+        //             ) : (
+        //               <a
+        //                 className="btn btn-secondary"
+        //                 href={`/reservations/${reservation.reservation_id}/seat`}
+        //               >
+        //                 Seat
+        //               </a>
+        //             )}
+        //           </td>
+        //         </tr>
+        //       );
+        //     })}
+        //   </tbody>
+        // </table>
         <p>No Reservations for {dateString}</p>
       )}
       <ErrorAlert error={tablesError} />

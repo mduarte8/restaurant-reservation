@@ -13,6 +13,15 @@ async function list(date) {
     .orderBy("reservation_time");
 }
 
+async function search(mobile_number) {
+  return knex("reservations")
+    .whereRaw(
+      "translate(mobile_number, '() -', '') like ?",
+      `%${mobile_number.replace(/\D/g, "")}%`
+    )
+    .orderBy("reservation_date");
+}
+
 async function create(post) {
   return knex(tableName).insert(post).returning("*");
 }
@@ -32,6 +41,7 @@ async function updateStatus(reservation_id, status) {
 
 module.exports = {
   list,
+  search,
   create,
   readReservation,
   updateStatus,

@@ -6,6 +6,7 @@ import NewReservation from "../reservations/NewReservation";
 import NotFound from "./NotFound";
 import useQuery from "../utils/useQuery";
 import NewTable from "../tables/NewTable";
+import Search from "../search/Search";
 
 import { today } from "../utils/date-time";
 import ManageReservation from "../reservations/ManageReservation";
@@ -39,6 +40,9 @@ function Routes() {
       </Route>
       <Route exact path="/tables/new">
         <NewTable />
+      </Route>
+      <Route exact path="/search">
+        <Search />
       </Route>
       <Route>
         <NotFound />

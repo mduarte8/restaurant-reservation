@@ -104,8 +104,6 @@ function NewReservation() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("errors is", errors);
-    console.log("errors.length is", errors.length);
     // to push to database here
     // need to format reservation time using utils/format-reservationtime, as well as reservation-date
     if (validateInputs()) {

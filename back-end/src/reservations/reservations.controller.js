@@ -121,8 +121,13 @@ function statusIsValid(req, res, next) {
  * List handler for reservation resources
  */
 async function list(req, res) {
-  const { date } = req.query;
-  const data = await service.list(date);
+  const { date, mobile_number } = req.query;
+  let data;
+  if (mobile_number) {
+    data = await service.search(mobile_number);
+  } else {
+    data = await service.list(date);
+  }
   res.status(200).json({
     data,
   });
