@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
-import { createReservation } from "../utils/api";
+import { Link, useHistory, useLocation, useParams } from "react-router-dom";
+import { createTable } from "../utils/api";
 import ReservationForm from "./ReservationForm";
-/**
- * Defines the "Form" page for a new reservation.
- *
- * @returns {JSX.Element}
- */
+import useQuery from "../utils/useQuery";
+import { readReservation, updateReservation } from "../utils/api";
 
-function NewReservation() {
+function EditReservation() {
   const history = useHistory();
+  const { reservation_id } = useParams();
 
+  const [errors, setErrors] = useState([]);
+  const [abortController, setAbortController] = useState(null);
+  //   const [reservation, setReservation] = useState({});
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -20,9 +21,6 @@ function NewReservation() {
     people: 1,
   });
 
-  const [errors, setErrors] = useState([]);
-  const [abortController, setAbortController] = useState(null);
-
   useEffect(() => {
     return () => {
       if (abortController) {
@@ -30,6 +28,18 @@ function NewReservation() {
       }
     };
   }, [abortController]);
+
+  useEffect(() => {
+    const newAbortController = new AbortController();
+    setAbortController(newAbortController);
+    setErrors([]);
+    readReservation({ reservation_id }, newAbortController.signal)
+      .then((reservationData) => {
+        // setReservation(reservationData);
+        setFormData({ ...reservationData });
+      })
+      .catch((error) => setErrors([error.message]));
+  }, [reservation_id]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -92,29 +102,42 @@ function NewReservation() {
     return true;
   };
 
-  function createNewReservation(reservationData) {
+  function updateExistingReservation(reservationData) {
     const newAbortController = new AbortController();
     setAbortController(newAbortController);
     setErrors([]);
-    createReservation(reservationData, newAbortController.signal)
-      .then((createdReservation) => {
+    updateReservation(reservationData, newAbortController.signal) // API call
+      .then((updatedReservation) => {
         history.push(`/dashboard?date=${formData.reservation_date}`);
       })
-      .catch((error) => setErrors([error.message]));
+      .catch((error) => {
+        console.log("error from updateRes is", error);
+        setErrors([error.message]);
+      });
   }
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log("formData is", formData);
+    console.log("errors is", errors);
     // to push to database here
     // need to format reservation time using utils/format-reservationtime, as well as reservation-date
     if (validateInputs()) {
-      createNewReservation({ ...formData, status: "booked" });
+      updateExistingReservation({ ...formData, status: "booked" });
     }
+  };
+
+  const handleCancel = (event) => {
+    event.preventDefault();
+    if (window.confirm("Do you want to cancel this reservation?")) {
+      console.log("yay!");
+    }
+    history.goBack();
   };
 
   return (
     <main>
-      <h1>This is a new Reservation!</h1>
+      <h1>Edit Reservation {reservation_id}!</h1>
       {errors.length > 0 &&
         errors.map((error, index) => {
           return (
@@ -123,65 +146,21 @@ function NewReservation() {
             </div>
           );
         })}
-      {/* <form onSubmit={handleSubmit}>
-        <input
-          name="first_name"
-          placeholder="First Name"
-          value={formData.first_name}
-          onChange={handleChange}
-        />
-        <input
-          name="last_name"
-          placeholder="Last Name"
-          value={formData.last_name}
-          onChange={handleChange}
-        />
-        <input
-          name="mobile_number"
-          id="mobile_number"
-          type="tel"
-          placeholder="Mobile Number"
-          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-          value={formData.mobile_number}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="reservation_date"
-          type="date"
-          placeholder="YYYY-MM-DD"
-          pattern="\d{4}-\d{2}-\d{2}"
-          value={formData.reservation_date}
-          onChange={handleChange}
-        />
-        <input
-          name="reservation_time"
-          type="time"
-          placeholder="Reservation Time"
-          value={formData.reservation_time}
-          onChange={handleChange}
-        />
-        <input
-          type="number"
-          min="1"
-          step="1"
-          name="people"
-          placeholder="1"
-          value={formData.people}
-          onChange={handleChange}
-        />
-        <button type="submit">Submit</button>
-        <button onClick={() => history.goBack()}>Cancel</button>
-      </form> */}
       <ReservationForm
         formData={formData}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         history={history}
       />
-      {/* <button onClick={() => history.goBack()}>Cancel</button> */}
+      <button
+        data-reservation-id-cancel={reservation_id}
+        className="btn btn-danger"
+        onClick={handleCancel}
+      >
+        Cancel
+      </button>
     </main>
   );
 }
 
-export default NewReservation;
+export default EditReservation;

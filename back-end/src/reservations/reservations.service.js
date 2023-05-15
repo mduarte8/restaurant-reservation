@@ -39,10 +39,24 @@ async function updateStatus(reservation_id, status) {
   return response;
 }
 
+async function update(reservation) {
+  console.log("made it to update, reservation is", reservation);
+  const { reservation_id, ...updatedData } = reservation;
+  console.log("reservation_id is", reservation_id);
+  console.log("updateData is", updatedData);
+  const response = await knex(tableName)
+    .where({ reservation_id })
+    .update(updatedData)
+    .returning("*");
+  console.log("update response is", response);
+  return response;
+}
+
 module.exports = {
   list,
   search,
   create,
   readReservation,
   updateStatus,
+  update,
 };

@@ -81,6 +81,27 @@ async function readReservation(params = {}, signal) {
     .then(formatReservationTime);
 }
 
+// async function updateReservation(params = {}, signal) {
+//   console.log("apid UpdateReservation params", params);
+//   const url = new URL(`${API_BASE_URL}/reservations/${params.reservation_id}`);
+//   Object.entries(params).forEach(([key, value]) =>
+//     url.searchParams.append(key, value.toString())
+//   );
+//   return await fetchJson(url, { headers, signal, method: "PUT" }, [])
+//     .then(formatReservationDate)
+//     .then(formatReservationTime);
+// }
+async function updateReservation(data, signal) {
+  console.log("updateReservation api data is", data);
+  const url = new URL(`${API_BASE_URL}/reservations/${data.reservation_id}`);
+  return await fetchJson(url, {
+    headers,
+    signal,
+    method: "PUT",
+    body: JSON.stringify({ data }),
+  });
+}
+
 async function listTables(params = {}, signal) {
   const url = new URL(`${API_BASE_URL}/tables`);
   Object.entries(params).forEach(([key, value]) =>
@@ -135,6 +156,7 @@ async function unseatTable(table_id, signal) {
 export {
   listReservations,
   readReservation,
+  updateReservation,
   createReservation,
   listTables,
   createTable,

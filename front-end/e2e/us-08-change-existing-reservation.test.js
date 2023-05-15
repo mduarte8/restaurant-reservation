@@ -1,5 +1,5 @@
 const puppeteer = require("puppeteer");
-const { setDefaultOptions } = require('expect-puppeteer');
+const { setDefaultOptions } = require("expect-puppeteer");
 const fs = require("fs");
 const fsPromises = fs.promises;
 
@@ -58,11 +58,11 @@ describe("US-08 - Change an existing reservation - E2E", () => {
         });
 
         const hrefSelector = `[href="/reservations/${reservation.reservation_id}/edit"]`;
+        console.log("href selector is", hrefSelector);
         await page.waitForSelector(hrefSelector);
 
         await page.screenshot({
-          path:
-            ".screenshots/us-08-dashboard-edit-click-after-no-change-expected.png",
+          path: ".screenshots/us-08-dashboard-edit-click-after-no-change-expected.png",
           fullPage: true,
         });
 
@@ -110,7 +110,7 @@ describe("US-08 - Change an existing reservation - E2E", () => {
         });
 
         const cancelButtonSelector = `[data-reservation-id-cancel="${reservation.reservation_id}"]`;
-
+        console.log("cancelButtonSelector is", cancelButtonSelector);
         const cancelButton = await page.$(cancelButtonSelector);
 
         if (!cancelButton) {

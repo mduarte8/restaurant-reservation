@@ -15,6 +15,7 @@ function ReservationList({ reservations }) {
           <th>Reservation Time</th>
           <th>Party Size</th>
           <th>Status</th>
+          <th>Edit</th>
           <th>Seat</th>
         </tr>
       </thead>
@@ -31,6 +32,18 @@ function ReservationList({ reservations }) {
               <td>{reservation.people}</td>
               <td data-reservation-id-status={`${reservation.reservation_id}`}>
                 {reservation.status}
+              </td>
+              <td>
+                {reservation.status === "booked" ? (
+                  <a
+                    className="btn btn-secondary"
+                    href={`/reservations/${reservation.reservation_id}/edit`}
+                  >
+                    Edit
+                  </a>
+                ) : (
+                  ""
+                )}
               </td>
               <td>
                 {reservation.status === "seated" ? (
