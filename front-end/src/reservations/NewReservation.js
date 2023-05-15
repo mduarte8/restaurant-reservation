@@ -109,7 +109,7 @@ function NewReservation() {
     // to push to database here
     // need to format reservation time using utils/format-reservationtime, as well as reservation-date
     if (validateInputs()) {
-      createNewReservation(formData);
+      createNewReservation({ ...formData, status: "booked" });
     }
   };
 

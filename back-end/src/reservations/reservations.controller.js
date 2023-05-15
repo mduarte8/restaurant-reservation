@@ -5,6 +5,13 @@ const service = require("./reservations.service");
  * Data validation for properties in req body, checks to make sure all properties expected are in request body. Defense in depth strategy, should be also validated on frontend.
  */
 
+function addStatus(req, res, next) {
+  if (!req.body.data.status) {
+    req.body.data.status = "booked";
+  }
+  next();
+}
+
 function bodyDataHas(propertyName) {
   return function (req, res, next) {
     const { data = {} } = req.body;
@@ -146,13 +153,14 @@ async function updateStatus(req, res) {
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [
+    addStatus,
     bodyDataHas("first_name"),
     bodyDataHas("last_name"),
     bodyDataHas("mobile_number"),
     bodyDataHas("reservation_date"),
     bodyDataHas("reservation_time"),
     bodyDataHas("people"),
-    bodyDataHas("status"),
+    // bodyDataHas("status"),
     bodyDataValid,
     asyncErrorBoundary(create),
   ],

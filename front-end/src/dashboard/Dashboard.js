@@ -103,6 +103,7 @@ function Dashboard() {
               <th>Reservation Date</th>
               <th>Reservation Time</th>
               <th>Party Size</th>
+              <th>Status</th>
               <th>Seat</th>
             </tr>
           </thead>
@@ -117,13 +118,22 @@ function Dashboard() {
                   <td>{reservation.reservation_date}</td>
                   <td>{reservation.reservation_time}</td>
                   <td>{reservation.people}</td>
+                  <td
+                    data-reservation-id-status={`${reservation.reservation_id}`}
+                  >
+                    {reservation.status}
+                  </td>
                   <td>
-                    <a
-                      className="btn btn-secondary"
-                      href={`/reservations/${reservation.reservation_id}/seat`}
-                    >
-                      Seat
-                    </a>
+                    {reservation.status === "seated" ? (
+                      ""
+                    ) : (
+                      <a
+                        className="btn btn-secondary"
+                        href={`/reservations/${reservation.reservation_id}/seat`}
+                      >
+                        Seat
+                      </a>
+                    )}
                   </td>
                 </tr>
               );
