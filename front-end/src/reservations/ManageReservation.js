@@ -44,7 +44,7 @@ function ManageReservation() {
       .then((tables) => {
         setTables(tables);
         if (tables.length > 0) {
-          setSelectedTable(tables[0].table_id);
+          setSelectedTable(tables[0].table_id); // IMPORTANT! corresponds to first option that comes back i.e. default first listed option in selector drop dow
         }
       })
       .catch(setTablesError);
