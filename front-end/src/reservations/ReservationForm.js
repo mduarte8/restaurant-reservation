@@ -57,7 +57,7 @@ function ReservationForm({
         onChange={handleChange}
       />
       <button type="submit">Submit</button>
-      <button onClick={() => history.goBack()}>Go Back</button>
+      <button onClick={() => history.goBack()}>Cancel</button>
     </form>
   );
 }

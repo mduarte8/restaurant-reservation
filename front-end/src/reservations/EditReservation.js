@@ -11,7 +11,7 @@ function EditReservation() {
 
   const [errors, setErrors] = useState([]);
   const [abortController, setAbortController] = useState(null);
-  //   const [reservation, setReservation] = useState({});
+  const [reservation, setReservation] = useState({});
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -37,6 +37,9 @@ function EditReservation() {
       .then((reservationData) => {
         // setReservation(reservationData);
         setFormData({ ...reservationData });
+      })
+      .then(() => {
+        setReservation({ reservation_id: reservation_id });
       })
       .catch((error) => setErrors([error.message]));
   }, [reservation_id]);
@@ -153,11 +156,11 @@ function EditReservation() {
         history={history}
       />
       <button
-        data-reservation-id-cancel={reservation_id}
+        data-reservation-id-cancel={reservation.reservation_id - 1}
         className="btn btn-danger"
         onClick={handleCancel}
       >
-        Cancel
+        Cancel {reservation.reservation_id}
       </button>
     </main>
   );

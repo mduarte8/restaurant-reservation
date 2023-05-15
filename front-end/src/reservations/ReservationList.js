@@ -3,6 +3,10 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 import { createReservation } from "../utils/api";
 
 function ReservationList({ reservations }) {
+  function handleCancel() {
+    console.log("cancel boop");
+  }
+
   return (
     <table>
       <thead>
@@ -17,6 +21,7 @@ function ReservationList({ reservations }) {
           <th>Status</th>
           <th>Edit</th>
           <th>Seat</th>
+          <th>Cancel?</th>
         </tr>
       </thead>
       <tbody>
@@ -55,6 +60,17 @@ function ReservationList({ reservations }) {
                   >
                     Seat
                   </a>
+                )}
+              </td>
+              <td>
+                {reservation.status !== "cancelled" && (
+                  <button
+                    data-reservation-id-cancel={reservation.reservation_id}
+                    className="btn btn-danger"
+                    onClick={handleCancel}
+                  >
+                    cancel {reservation.reservation_id}
+                  </button>
                 )}
               </td>
             </tr>

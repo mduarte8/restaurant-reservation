@@ -6,6 +6,12 @@ const service = require("./reservations.service");
  */
 
 function addStatus(req, res, next) {
+  if (!req.body.data) {
+    next({
+      status: 400,
+      message: "Must send valid data",
+    });
+  }
   if (!req.body.data.status) {
     req.body.data.status = "booked";
   }
@@ -27,7 +33,14 @@ function bodyDataHas(propertyName) {
  * Data validation for properties in req body, checks that reservation_date, reservation_time and people are of acceptable format. Defense in depth strategy should come from frontend correctly.
  */
 async function reservationExists(req, res, next) {
-  console.log("got here in backend...");
+  console.log("in reservartion Exists...");
+  // console.log("req.body.data is", req.body.data);
+  // if (!req.body.data) {
+  //   next({
+  //     status: 400,
+  //     message: "No data passed",
+  //   });
+  // }
   const reservation_id =
     req.params.reservation_id || req.body.data.reservation_id; // checks req.body.data for use in put in tables.controller
   // console.log("looking for reservation_id", reservation_id);
@@ -35,6 +48,7 @@ async function reservationExists(req, res, next) {
   const foundReservation = await service.readReservation(reservation_id);
   if (foundReservation) {
     res.locals.reservation = foundReservation;
+    console.log("Found reservation...");
     return next();
   }
   next({
@@ -44,8 +58,20 @@ async function reservationExists(req, res, next) {
 }
 
 function bodyDataValid(req, res, next) {
+  if (!req.body.data) {
+    return next({
+      status: 400,
+      message: "must include data",
+    });
+  }
   const { data = {} } = req.body;
   // may want to add validation that it's a valid year, month and date
+  // if (!data) {
+  //   next({
+  //     status: 400,
+  //     message: "data is missing",
+  //   });
+  // }
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (!dateRegex.test(data["reservation_date"])) {
     next({
@@ -102,11 +128,20 @@ function bodyDataValid(req, res, next) {
 }
 
 function statusIsValid(req, res, next) {
-  const validStatuses = ["booked", "seated", "finished"];
+  const validStatuses = ["booked", "seated", "finished", "cancelled"];
   if (res.locals.reservation.status === "finished") {
     next({
       status: 400,
       message: `finished reservation cannot be updated`,
+    });
+  }
+  if (
+    req.body.data.status === "cancelled" &&
+    res.locals.reservation.status !== "booked"
+  ) {
+    next({
+      status: 400,
+      message: `only booked reservations can be cancelled`,
     });
   }
   if (!validStatuses.includes(req.body.data.status)) {
@@ -194,7 +229,8 @@ module.exports = {
     bodyDataHas("reservation_date"),
     bodyDataHas("reservation_time"),
     bodyDataHas("people"),
-    bodyDataHas("status"),
+    bodyDataValid,
+    // bodyDataHas("status"),
     asyncErrorBoundary(update),
   ],
 };
