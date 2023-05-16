@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { listReservations, listTables, unseatTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import useQuery from "../utils/useQuery";
-import { useLocation, Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { today, previous, next } from "../utils/date-time";
 import ReservationList from "../reservations/ReservationList";
 
@@ -29,6 +29,14 @@ function Dashboard() {
       setDateString(queryDateString);
     }
   }, [queryDateString]);
+
+  useEffect(() => {
+    return () => {
+      if (abortController) {
+        abortController.abort();
+      }
+    };
+  }, [abortController]);
 
   useEffect(loadDashboard, [dateString, reload]);
 
@@ -111,7 +119,7 @@ function Dashboard() {
                   <td>{table.table_name}</td>
                   <td>{table.capacity}</td>
                   <td data-table-id-status={table.table_id}>
-                    {!table.reservation_id ? "free" : "occupied"}
+                    {!table.reservation_id ? "Free" : "Occupied"}
                   </td>
                   <td>
                     {!table.reservation_id ? (

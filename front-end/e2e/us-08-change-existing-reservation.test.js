@@ -58,7 +58,6 @@ describe("US-08 - Change an existing reservation - E2E", () => {
         });
 
         const hrefSelector = `[href="/reservations/${reservation.reservation_id}/edit"]`;
-        console.log("href selector is", hrefSelector);
         await page.waitForSelector(hrefSelector);
 
         await page.screenshot({
@@ -110,7 +109,6 @@ describe("US-08 - Change an existing reservation - E2E", () => {
         });
 
         const cancelButtonSelector = `[data-reservation-id-cancel="${reservation.reservation_id}"]`;
-        console.log("cancelButtonSelector is", cancelButtonSelector);
         const cancelButton = await page.$(cancelButtonSelector);
 
         if (!cancelButton) {
