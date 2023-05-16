@@ -2,12 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { createTable } from "../utils/api";
 
-function ReservationForm({
-  formData,
-  handleChange,
-  handleSubmit,
-  history = null,
-}) {
+function ReservationForm({ formData, handleChange, handleSubmit }) {
+  const history = useHistory();
+
   return (
     <form onSubmit={handleSubmit}>
       <input
@@ -57,7 +54,7 @@ function ReservationForm({
         onChange={handleChange}
       />
       <button type="submit">Submit</button>
-      <button onClick={() => history.goBack()}>Cancel</button>
+      {/* <button onClick={() => history.goBack()}>cancel</button> */}
     </form>
   );
 }

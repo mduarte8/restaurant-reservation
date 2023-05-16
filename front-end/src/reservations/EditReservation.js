@@ -35,6 +35,11 @@ function EditReservation() {
     setErrors([]);
     readReservation({ reservation_id }, newAbortController.signal)
       .then((reservationData) => {
+        const formattedTime = reservationData.reservation_time.substr(0, 5);
+        console.log(formattedTime);
+        return { ...reservationData, reservation_time: formattedTime };
+      })
+      .then((reservationData) => {
         // setReservation(reservationData);
         setFormData({ ...reservationData });
       })
@@ -45,6 +50,7 @@ function EditReservation() {
   }, [reservation_id]);
 
   const handleChange = (event) => {
+    console.log("formData is", formData);
     const { name, value } = event.target;
     let formattedValue = value;
 
@@ -130,13 +136,13 @@ function EditReservation() {
     }
   };
 
-  const handleCancel = (event) => {
-    event.preventDefault();
-    if (window.confirm("Do you want to cancel this reservation?")) {
-      console.log("yay!");
-    }
-    history.goBack();
-  };
+  //   const handleCancel = (event) => {
+  //     event.preventDefault();
+  //     if (window.confirm("Do you want to cancel this reservation?")) {
+  //       console.log("yay!");
+  //     }
+  //     history.goBack();
+  //   };
 
   return (
     <main>
@@ -153,15 +159,14 @@ function EditReservation() {
         formData={formData}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
-        history={history}
       />
-      {/* <button
-        data-reservation-id-cancel={reservation.reservation_id}
-        className="btn btn-danger"
-        onClick={handleCancel}
+      <button
+        // data-reservation-id-cancel={reservation.reservation_id}
+        // className="btn btn-secondary"
+        onClick={() => history.goBack()}
       >
         cancel {reservation.reservation_id}
-      </button> */}
+      </button>
     </main>
   );
 }

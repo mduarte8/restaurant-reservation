@@ -177,9 +177,8 @@ function NewReservation() {
         formData={formData}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
-        history={history}
       />
-      {/* <button onClick={() => history.goBack()}>Cancel</button> */}
+      <button onClick={() => history.goBack()}>Cancel</button>
     </main>
   );
 }

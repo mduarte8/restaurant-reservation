@@ -10,6 +10,7 @@ function Search() {
   const [errors, setErrors] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [noResultsFoundMessage, setNoResultsFoundMessage] = useState("");
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -18,6 +19,8 @@ function Search() {
       }
     };
   }, [abortController]);
+
+  useEffect(listSearchedReservations, [reload]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -77,7 +80,7 @@ function Search() {
         <button type="submit">Find</button>
       </form>
       {reservations && reservations.length ? (
-        <ReservationList reservations={reservations} />
+        <ReservationList reservations={reservations} setReload={setReload} />
       ) : (
         noResultsFoundMessage
       )}
