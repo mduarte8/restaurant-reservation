@@ -144,9 +144,7 @@ function EditReservation() {
         handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
-      <button onClick={() => history.goBack()}>
-        cancel {reservation.reservation_id}
-      </button>
+      <button onClick={() => history.goBack()}>Cancel</button>
     </main>
   );
 }

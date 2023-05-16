@@ -75,7 +75,8 @@ function ReservationList({ reservations, setReload }) {
               <td>{reservation.reservation_time}</td>
               <td>{reservation.people}</td>
               <td data-reservation-id-status={`${reservation.reservation_id}`}>
-                {reservation.status}
+                {reservation.status.charAt(0).toUpperCase() +
+                  reservation.status.slice(1)}
               </td>
               <td>
                 {reservation.status === "booked" && (
@@ -104,7 +105,7 @@ function ReservationList({ reservations, setReload }) {
                     className="btn btn-danger"
                     onClick={() => handleCancel(reservation.reservation_id)}
                   >
-                    cancel {reservation.reservation_id}
+                    Cancel
                   </button>
                 )}
               </td>
