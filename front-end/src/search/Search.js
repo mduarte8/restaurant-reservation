@@ -66,17 +66,24 @@ function Search() {
             </div>
           );
         })}
-      <form onSubmit={handleSubmit}>
-        <input
-          name="mobile_number"
-          type="tel"
-          placeholder="Enter a customer's phone number"
-          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-          value={mobileSearch}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Find</button>
+      <form onSubmit={handleSubmit} className="form-floating">
+        <div class="form-floating">
+          <input
+            name="mobile_number"
+            id="mobile_number"
+            type="tel"
+            placeholder="Enter a customer's phone number"
+            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+            value={mobileSearch}
+            onChange={handleChange}
+            className="form-control w-25"
+            required
+          />
+          <label for="mobile_number">Search Phone Number</label>
+        </div>
+        <button type="submit" className="btn btn-primary mt-2 mb-2">
+          Find
+        </button>
       </form>
       {reservations && reservations.length ? (
         <ReservationList reservations={reservations} setReload={setReload} />

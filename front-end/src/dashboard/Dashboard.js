@@ -72,21 +72,22 @@ function Dashboard() {
   return (
     <main>
       <h1>Dashboard</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for {dateString}</h4>
-        <h1>{}</h1>
-        <div>
+      <div className="d-md-flex mb-3 justify-content-between mt-1">
+        <h4 className="d-flex justify-content-center align-items-center mb-0">
+          Reservations for {dateString}
+        </h4>
+        <div className="d-flex justify-content-center">
           <Link
-            className="btn btn-primary"
+            className="btn btn-primary m-1"
             to={`/dashboard?date=${previous(dateString)}`}
           >
             Previous {previous(dateString)}
           </Link>
-          <Link className="btn btn-primary" to={`/reservations`}>
+          <Link className="btn btn-primary m-1" to={`/reservations`}>
             Today {today()}
           </Link>
           <Link
-            className="btn btn-primary"
+            className="btn btn-primary m-1"
             to={`/dashboard?date=${next(dateString)}`}
           >
             Next {next(dateString)}
@@ -99,23 +100,24 @@ function Dashboard() {
       ) : (
         <p>No Reservations for {dateString}</p>
       )}
+      <h2>Tables</h2>
       <ErrorAlert error={tablesError} />
       {tables && tables.length ? (
-        <table>
+        <table className="table">
           <thead>
             <tr>
-              <th>Table Id</th>
-              <th>Table Name</th>
-              <th>Capacity</th>
-              <th>Availability</th>
-              <th>End?</th>
+              <th scope="col">Table Id</th>
+              <th scope="col">Table Name</th>
+              <th scope="col">Capacity</th>
+              <th scope="col">Availability</th>
+              <th scope="col">End?</th>
             </tr>
           </thead>
           <tbody>
             {tables.map((table, index) => {
               return (
                 <tr key={index}>
-                  <td>{table.table_id}</td>
+                  <th scope="row">{table.table_id}</th>
                   <td>{table.table_name}</td>
                   <td>{table.capacity}</td>
                   <td data-table-id-status={table.table_id}>
@@ -128,6 +130,7 @@ function Dashboard() {
                       <button
                         data-table-id-finish={table.table_id}
                         onClick={() => handleFinish(table.table_id)}
+                        className="btn btn-secondary"
                       >
                         Finish
                       </button>

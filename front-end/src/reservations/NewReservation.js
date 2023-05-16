@@ -60,7 +60,7 @@ function NewReservation() {
     let errorMessages = [];
     for (const key in formData) {
       if (formData[key] === "") {
-        errorMessages.push("All fields must be filled out.");
+        errorMessages.push(`All fields must be filled out. Missing ${key}.`);
         // could call which field is empty if desired
       }
     }
@@ -113,7 +113,7 @@ function NewReservation() {
 
   return (
     <main>
-      <h1>This is a new Reservation!</h1>
+      <h1>Make a New Reservation</h1>
       {errors.length > 0 &&
         errors.map((error, index) => {
           return (
@@ -127,7 +127,9 @@ function NewReservation() {
         handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
-      <button onClick={() => history.goBack()}>Cancel</button>
+      <button onClick={() => history.goBack()} className="btn btn-secondary">
+        Cancel
+      </button>
     </main>
   );
 }

@@ -39,7 +39,7 @@ function ReservationList({ reservations, setReload }) {
   }
 
   return (
-    <table>
+    <>
       {errors.length > 0 &&
         errors.map((error, index) => {
           return (
@@ -48,72 +48,76 @@ function ReservationList({ reservations, setReload }) {
             </div>
           );
         })}
-      <thead>
-        <tr>
-          <th>Reservation ID</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Phone #</th>
-          <th>Reservation Date</th>
-          <th>Reservation Time</th>
-          <th>Party Size</th>
-          <th>Status</th>
-          <th>Edit</th>
-          <th>Seat</th>
-          <th>Cancel?</th>
-        </tr>
-      </thead>
-      <tbody>
-        {reservations.map((reservation, index) => {
-          return (
-            <tr key={index}>
-              <td>{reservation.reservation_id}</td>
-              <td>{reservation.first_name}</td>
-              <td>{reservation.last_name}</td>
-              <td>{reservation.mobile_number}</td>
-              <td>{reservation.reservation_date}</td>
-              <td>{reservation.reservation_time}</td>
-              <td>{reservation.people}</td>
-              <td data-reservation-id-status={`${reservation.reservation_id}`}>
-                {reservation.status.charAt(0).toUpperCase() +
-                  reservation.status.slice(1)}
-              </td>
-              <td>
-                {reservation.status === "booked" && (
-                  <a
-                    className="btn btn-secondary"
-                    href={`/reservations/${reservation.reservation_id}/edit`}
-                  >
-                    Edit
-                  </a>
-                )}
-              </td>
-              <td>
-                {reservation.status === "booked" && (
-                  <a
-                    className="btn btn-secondary"
-                    href={`/reservations/${reservation.reservation_id}/seat`}
-                  >
-                    Seat
-                  </a>
-                )}
-              </td>
-              <td>
-                {reservation.status === "booked" && (
-                  <button
-                    data-reservation-id-cancel={reservation.reservation_id}
-                    className="btn btn-danger"
-                    onClick={() => handleCancel(reservation.reservation_id)}
-                  >
-                    Cancel
-                  </button>
-                )}
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+      <table className="table">
+        <thead>
+          <tr>
+            <th scope="col">Reservation ID</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Phone #</th>
+            <th scope="col">Reservation Date</th>
+            <th scope="col">Reservation Time</th>
+            <th scope="col">Party Size</th>
+            <th scope="col">Status</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Seat</th>
+            <th scope="col">Cancel?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {reservations.map((reservation, index) => {
+            return (
+              <tr key={index}>
+                <th scope="row">{reservation.reservation_id}</th>
+                <td>{reservation.first_name}</td>
+                <td>{reservation.last_name}</td>
+                <td>{reservation.mobile_number}</td>
+                <td>{reservation.reservation_date}</td>
+                <td>{reservation.reservation_time}</td>
+                <td>{reservation.people}</td>
+                <td
+                  data-reservation-id-status={`${reservation.reservation_id}`}
+                >
+                  {reservation.status.charAt(0).toUpperCase() +
+                    reservation.status.slice(1)}
+                </td>
+                <td>
+                  {reservation.status === "booked" && (
+                    <a
+                      className="btn btn-secondary"
+                      href={`/reservations/${reservation.reservation_id}/edit`}
+                    >
+                      Edit
+                    </a>
+                  )}
+                </td>
+                <td>
+                  {reservation.status === "booked" && (
+                    <a
+                      className="btn btn-secondary"
+                      href={`/reservations/${reservation.reservation_id}/seat`}
+                    >
+                      Seat
+                    </a>
+                  )}
+                </td>
+                <td>
+                  {reservation.status === "booked" && (
+                    <button
+                      data-reservation-id-cancel={reservation.reservation_id}
+                      className="btn btn-danger"
+                      onClick={() => handleCancel(reservation.reservation_id)}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </>
   );
 }
 

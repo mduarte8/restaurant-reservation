@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { createTable } from "../utils/api";
 
 /**
@@ -33,7 +33,6 @@ function NewTable() {
     if (name === "capacity") {
       formattedValue = parseInt(value);
     }
-    console.log(formData);
     setFormData({ ...formData, [name]: formattedValue });
   };
 
@@ -90,28 +89,42 @@ function NewTable() {
             </div>
           );
         })}
-      <form onSubmit={handleSubmit}>
-        <input
-          name="table_name"
-          minLength={2}
-          onChange={handleChange}
-          value={formData.table_name}
-          required
-        />
-        <input
-          name="capacity"
-          type="number"
-          min="1"
-          step="1"
-          placeholder="1"
-          onChange={handleChange}
-          value={formData.capacity}
-          required
-        />
-        <button type="submit" name="submit">
+      <form onSubmit={handleSubmit} className="form-floating">
+        <div className="form-floating mb-3">
+          <input
+            name="table_name"
+            id="table_name"
+            minLength={2}
+            placeholder="Table Name"
+            onChange={handleChange}
+            value={formData.table_name}
+            className="form-control"
+            required
+          />
+          <label for="table_name">Table Name</label>
+        </div>
+        <div className="form-floating mb-3">
+          <input
+            name="capacity"
+            type="number"
+            min="1"
+            step="1"
+            placeholder="1"
+            onChange={handleChange}
+            value={formData.capacity}
+            className="form-control"
+            required
+          />
+          <label for="capacity">Max Capacity</label>
+        </div>
+        <button type="submit" name="submit" className="btn btn-primary m-2">
           Submit
         </button>
-        <button name="cancel" onClick={() => history.goBack()}>
+        <button
+          name="cancel"
+          onClick={() => history.goBack()}
+          className="btn btn-secondary m-2"
+        >
           Cancel
         </button>
       </form>
