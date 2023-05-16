@@ -21,9 +21,6 @@ function Dashboard() {
   const [reload, setReload] = useState(false);
   const [abortController, setAbortController] = useState(null);
 
-  // console.log("passed in dateString is", dateString);
-
-  const location = useLocation();
   const query = useQuery();
   const queryDateString = query.get("date");
 
@@ -38,7 +35,6 @@ function Dashboard() {
   function loadDashboard() {
     const abortController = new AbortController();
     setReservationsError(null);
-    // const date = dateString; // need this to pass in date as correct param to the api function call
     listReservations({ date: dateString }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
@@ -47,7 +43,6 @@ function Dashboard() {
       .catch(setTablesError);
     return () => abortController.abort();
   }
-  // console.log(reservations);
 
   function handleFinish(table_id) {
     if (
@@ -91,63 +86,13 @@ function Dashboard() {
         </div>
       </div>
       <ErrorAlert error={reservationsError} />
-      {/* this code below needs to change */}
       {reservations && reservations.length ? (
         <ReservationList reservations={reservations} setReload={setReload} />
       ) : (
-        // JSON.stringify(reservations)
-        // <table>
-        //   <thead>
-        //     <tr>
-        //       <th>Reservation ID</th>
-        //       <th>First Name</th>
-        //       <th>Last Name</th>
-        //       <th>Phone #</th>
-        //       <th>Reservation Date</th>
-        //       <th>Reservation Time</th>
-        //       <th>Party Size</th>
-        //       <th>Status</th>
-        //       <th>Seat</th>
-        //     </tr>
-        //   </thead>
-        //   <tbody>
-        //     {reservations.map((reservation, index) => {
-        //       return (
-        //         <tr key={index}>
-        //           <td>{reservation.reservation_id}</td>
-        //           <td>{reservation.first_name}</td>
-        //           <td>{reservation.last_name}</td>
-        //           <td>{reservation.mobile_number}</td>
-        //           <td>{reservation.reservation_date}</td>
-        //           <td>{reservation.reservation_time}</td>
-        //           <td>{reservation.people}</td>
-        //           <td
-        //             data-reservation-id-status={`${reservation.reservation_id}`}
-        //           >
-        //             {reservation.status}
-        //           </td>
-        //           <td>
-        //             {reservation.status === "seated" ? (
-        //               ""
-        //             ) : (
-        //               <a
-        //                 className="btn btn-secondary"
-        //                 href={`/reservations/${reservation.reservation_id}/seat`}
-        //               >
-        //                 Seat
-        //               </a>
-        //             )}
-        //           </td>
-        //         </tr>
-        //       );
-        //     })}
-        //   </tbody>
-        // </table>
         <p>No Reservations for {dateString}</p>
       )}
       <ErrorAlert error={tablesError} />
       {tables && tables.length ? (
-        // JSON.stringify(tables)
         <table>
           <thead>
             <tr>

@@ -33,22 +33,11 @@ function bodyDataHas(propertyName) {
  * Data validation for properties in req body, checks that reservation_date, reservation_time and people are of acceptable format. Defense in depth strategy should come from frontend correctly.
  */
 async function reservationExists(req, res, next) {
-  console.log("in reservartion Exists...");
-  // console.log("req.body.data is", req.body.data);
-  // if (!req.body.data) {
-  //   next({
-  //     status: 400,
-  //     message: "No data passed",
-  //   });
-  // }
   const reservation_id =
     req.params.reservation_id || req.body.data.reservation_id; // checks req.body.data for use in put in tables.controller
-  // console.log("looking for reservation_id", reservation_id);
-  // console.log("status is", req.body.data.status);
   const foundReservation = await service.readReservation(reservation_id);
   if (foundReservation) {
     res.locals.reservation = foundReservation;
-    console.log("Found reservation...", foundReservation);
     return next();
   }
   next({
@@ -58,7 +47,6 @@ async function reservationExists(req, res, next) {
 }
 
 function bodyDataValid(req, res, next) {
-  console.log("backend req.body", req.body.data);
   if (!req.body.data) {
     return next({
       status: 400,
@@ -66,13 +54,6 @@ function bodyDataValid(req, res, next) {
     });
   }
   const { data = {} } = req.body;
-  // may want to add validation that it's a valid year, month and date
-  // if (!data) {
-  //   next({
-  //     status: 400,
-  //     message: "data is missing",
-  //   });
-  // }
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (!dateRegex.test(data["reservation_date"])) {
     next({
@@ -130,7 +111,6 @@ function bodyDataValid(req, res, next) {
 
 function statusIsValid(req, res, next) {
   const validStatuses = ["booked", "seated", "finished", "cancelled"];
-  console.log("req.body.data is", req.body.data);
   if (res.locals.reservation.status === "finished") {
     next({
       status: 400,
@@ -196,7 +176,6 @@ async function updateStatus(req, res) {
 async function update(req, res) {
   // const { reservation } = res.locals;
   const { reservation_id } = req.body.data;
-  console.log("at update in controller with reservation", req.body.data);
   const updatedReservation = await service.update(req.body.data);
   res.status(200).json({ data: updatedReservation[0] });
 }

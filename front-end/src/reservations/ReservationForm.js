@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
-import { createTable } from "../utils/api";
+import React from "react";
+// import { Link, useHistory, useLocation } from "react-router-dom";
 
 function ReservationForm({ formData, handleChange, handleSubmit }) {
-  const history = useHistory();
+  //   const history = useHistory();
 
   return (
     <form onSubmit={handleSubmit}>
@@ -54,7 +53,6 @@ function ReservationForm({ formData, handleChange, handleSubmit }) {
         onChange={handleChange}
       />
       <button type="submit">Submit</button>
-      {/* <button onClick={() => history.goBack()}>cancel</button> */}
     </form>
   );
 }

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
-import { createReservation, listReservations } from "../utils/api";
+import { listReservations } from "../utils/api";
 import ReservationList from "../reservations/ReservationList";
-import ErrorAlert from "../layout/ErrorAlert";
 
 function Search() {
   const [mobileSearch, setMobileSearch] = useState("");
@@ -20,10 +18,11 @@ function Search() {
     };
   }, [abortController]);
 
+  // runs on page load, effectively lists all reservations
   useEffect(listSearchedReservations, [reload]);
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
+    const { value } = event.target;
     let formattedValue = value;
     const input = value.replace(/\D/g, "");
     if (input.length <= 3) {

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
 import { updateReservationStatus } from "../utils/api";
 
 function ReservationList({ reservations, setReload }) {
-  //   const [reservations, setReservations] = useState(reservations);
   const [errors, setErrors] = useState([]);
   const [abortController, setAbortController] = useState(null);
 
@@ -29,7 +27,6 @@ function ReservationList({ reservations, setReload }) {
     const newAbortController = new AbortController();
     setAbortController(newAbortController);
     setErrors([]);
-    // console.log({ ...reservation, status: "cancelled" });
     updateReservationStatus(
       reservation_id,
       "cancelled",

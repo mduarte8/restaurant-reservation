@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { createReservation } from "../utils/api";
 import ReservationForm from "./ReservationForm";
 /**
@@ -38,6 +38,7 @@ function NewReservation() {
     if (name === "mobile_number") {
       const input = value.replace(/\D/g, "");
       if (input.length <= 3) {
+        //automatically updates mobile number to have dashes in format ###-###-####
         formattedValue = input;
       } else if (input.length <= 6) {
         formattedValue = `${input.slice(0, 3)}-${input.slice(3)}`;
@@ -105,8 +106,6 @@ function NewReservation() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // to push to database here
-    // need to format reservation time using utils/format-reservationtime, as well as reservation-date
     if (validateInputs()) {
       createNewReservation({ ...formData, status: "booked" });
     }
@@ -123,56 +122,6 @@ function NewReservation() {
             </div>
           );
         })}
-      {/* <form onSubmit={handleSubmit}>
-        <input
-          name="first_name"
-          placeholder="First Name"
-          value={formData.first_name}
-          onChange={handleChange}
-        />
-        <input
-          name="last_name"
-          placeholder="Last Name"
-          value={formData.last_name}
-          onChange={handleChange}
-        />
-        <input
-          name="mobile_number"
-          id="mobile_number"
-          type="tel"
-          placeholder="Mobile Number"
-          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-          value={formData.mobile_number}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="reservation_date"
-          type="date"
-          placeholder="YYYY-MM-DD"
-          pattern="\d{4}-\d{2}-\d{2}"
-          value={formData.reservation_date}
-          onChange={handleChange}
-        />
-        <input
-          name="reservation_time"
-          type="time"
-          placeholder="Reservation Time"
-          value={formData.reservation_time}
-          onChange={handleChange}
-        />
-        <input
-          type="number"
-          min="1"
-          step="1"
-          name="people"
-          placeholder="1"
-          value={formData.people}
-          onChange={handleChange}
-        />
-        <button type="submit">Submit</button>
-        <button onClick={() => history.goBack()}>Cancel</button>
-      </form> */}
       <ReservationForm
         formData={formData}
         handleChange={handleChange}

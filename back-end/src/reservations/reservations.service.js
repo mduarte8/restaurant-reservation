@@ -1,7 +1,6 @@
 const knex = require("../db/connection");
 const tableName = "reservations";
 
-// need to update
 async function list(date) {
   if (!date) {
     return knex(tableName).select("*").orderBy("reservation_time");

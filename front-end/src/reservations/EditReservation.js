@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useLocation, useParams } from "react-router-dom";
-import { createTable } from "../utils/api";
+import { useHistory, useParams } from "react-router-dom";
 import ReservationForm from "./ReservationForm";
-import useQuery from "../utils/useQuery";
 import { readReservation, updateReservation } from "../utils/api";
 
 function EditReservation() {
@@ -40,7 +38,6 @@ function EditReservation() {
         return { ...reservationData, reservation_time: formattedTime };
       })
       .then((reservationData) => {
-        // setReservation(reservationData);
         setFormData({ ...reservationData });
       })
       .then(() => {
@@ -50,12 +47,11 @@ function EditReservation() {
   }, [reservation_id]);
 
   const handleChange = (event) => {
-    console.log("formData is", formData);
     const { name, value } = event.target;
     let formattedValue = value;
 
     if (name === "mobile_number") {
-      const input = value.replace(/\D/g, "");
+      const input = value.replace(/\D/g, ""); //automatically updates mobile number to have dashes in format ###-###-####
       if (input.length <= 3) {
         formattedValue = input;
       } else if (input.length <= 6) {
@@ -127,22 +123,10 @@ function EditReservation() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("formData is", formData);
-    console.log("errors is", errors);
-    // to push to database here
-    // need to format reservation time using utils/format-reservationtime, as well as reservation-date
     if (validateInputs()) {
       updateExistingReservation({ ...formData, status: "booked" });
     }
   };
-
-  //   const handleCancel = (event) => {
-  //     event.preventDefault();
-  //     if (window.confirm("Do you want to cancel this reservation?")) {
-  //       console.log("yay!");
-  //     }
-  //     history.goBack();
-  //   };
 
   return (
     <main>
@@ -160,11 +144,7 @@ function EditReservation() {
         handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
-      <button
-        // data-reservation-id-cancel={reservation.reservation_id}
-        // className="btn btn-secondary"
-        onClick={() => history.goBack()}
-      >
+      <button onClick={() => history.goBack()}>
         cancel {reservation.reservation_id}
       </button>
     </main>

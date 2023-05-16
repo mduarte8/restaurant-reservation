@@ -91,7 +91,6 @@ function canSeatReservation(req, res, next) {
 }
 
 async function list(req, res) {
-  // const { date } = req.query;
   const data = await service.list();
   res.status(200).json({
     data,

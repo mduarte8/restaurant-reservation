@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useLocation, useParams } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import { readReservation, listTables, seatTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 /**
@@ -10,8 +10,6 @@ import ErrorAlert from "../layout/ErrorAlert";
 
 function ManageReservation() {
   const history = useHistory();
-  const location = useLocation();
-  //   const query = useQuery();
   const { reservation_id } = useParams();
 
   const [errors, setErrors] = useState([]);
@@ -35,8 +33,6 @@ function ManageReservation() {
   function loadManageReservation() {
     const abortController = new AbortController();
     setReservationError(null);
-    // const date = dateString; // need this to pass in date as correct param to the api function call
-    // NEED TO CREATE readReservation
     readReservation({ reservation_id }, abortController.signal)
       .then(setReservation)
       .catch(setReservationError);
@@ -79,12 +75,6 @@ function ManageReservation() {
         history.push("/dashboard");
       })
       .catch((error) => setErrors([error.message]));
-
-    // createTable(tableData, newAbortController.signal)
-    //   .then((createdTable) => {
-    //     history.push(`/dashboard`); // need to wait for table to be created and promise to resolve
-    //   })
-    //   .catch((error) => setErrors([error.message]));
   }
 
   const handleSubmit = (event) => {
@@ -99,17 +89,8 @@ function ManageReservation() {
   return (
     <main>
       <h1>Seat This Reservation!</h1>
-      {/* {reservationError &&
-        reservationError.map((error, index) => {
-          return (
-            <div className="alert alert-danger m-2" key={index}>
-              {error}
-            </div>
-          );
-        })} */}
       <ErrorAlert error={reservationError} />
       {reservation ? (
-        // JSON.stringify(reservations)
         <table>
           <thead>
             <tr>
@@ -137,14 +118,6 @@ function ManageReservation() {
       ) : (
         <p>No Reservations for {reservation_id}</p>
       )}
-      {/* {tablesError &&
-        tablesError.map((error, index) => {
-          return (
-            <div className="alert alert-danger m-2" key={index}>
-              {error}
-            </div>
-          );
-        })} */}
       <ErrorAlert error={tablesError} />
       {errors.length > 0 &&
         errors.map((error, index) => {
@@ -155,18 +128,11 @@ function ManageReservation() {
           );
         })}
       {tables && tables.length ? (
-        // JSON.stringify(tables)
         <form onSubmit={handleSubmit}>
           <select name="table_id" onChange={handleChange}>
-            {/* <option value="">Select a table</option> */}
             {tables.map((table, index) => {
+              // first option is first table returned in tables, handled by setSelectedTables after listTables above
               return (
-                //   <tr key={index}>
-                //     <td>{table.table_id}</td>
-                //     <td>{table.table_name}</td>
-                //     <td>{table.capacity}</td>
-                //     <td>{!table.reservation_id ? "Open" : "Occupied"}</td>
-                //   </tr>
                 <option value={table.table_id} key={table.table_id}>
                   {table.table_name} - {table.capacity}
                 </option>
