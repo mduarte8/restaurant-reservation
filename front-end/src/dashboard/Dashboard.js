@@ -93,7 +93,7 @@ function Dashboard() {
       <ErrorAlert error={reservationsError} />
       {/* this code below needs to change */}
       {reservations && reservations.length ? (
-        <ReservationList reservations={reservations} />
+        <ReservationList reservations={reservations} setReload={setReload} />
       ) : (
         // JSON.stringify(reservations)
         // <table>

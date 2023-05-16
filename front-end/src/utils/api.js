@@ -101,6 +101,16 @@ async function updateReservation(data, signal) {
     body: JSON.stringify({ data }),
   });
 }
+async function updateReservationStatus(reservation_id, status, signal) {
+  // console.log("updateReservation api data is", data);
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}/status`);
+  return await fetchJson(url, {
+    headers,
+    signal,
+    method: "PUT",
+    body: JSON.stringify({ data: { status } }),
+  });
+}
 
 async function listTables(params = {}, signal) {
   const url = new URL(`${API_BASE_URL}/tables`);
@@ -157,6 +167,7 @@ export {
   listReservations,
   readReservation,
   updateReservation,
+  updateReservationStatus,
   createReservation,
   listTables,
   createTable,

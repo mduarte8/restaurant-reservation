@@ -1,14 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
-import { createReservation } from "../utils/api";
+import { updateReservationStatus } from "../utils/api";
 
-function ReservationList({ reservations }) {
-  function handleCancel() {
-    console.log("cancel boop");
+function ReservationList({ reservations, setReload }) {
+  //   const [reservations, setReservations] = useState(reservations);
+  const [errors, setErrors] = useState([]);
+  const [abortController, setAbortController] = useState(null);
+
+  useEffect(() => {
+    return () => {
+      if (abortController) {
+        abortController.abort();
+      }
+    };
+  }, [abortController]);
+
+  function handleCancel(reservation) {
+    if (
+      window.confirm(
+        "Do you want to cancel this reservation? This cannot be undone."
+      )
+    ) {
+      cancelReservation(reservation);
+    }
+  }
+
+  function cancelReservation(reservation_id) {
+    const newAbortController = new AbortController();
+    setAbortController(newAbortController);
+    setErrors([]);
+    // console.log({ ...reservation, status: "cancelled" });
+    updateReservationStatus(
+      reservation_id,
+      "cancelled",
+      newAbortController.signal
+    )
+      .then(() => {
+        setReload((previous) => !previous);
+      })
+      .catch((error) => setErrors([error.message]));
   }
 
   return (
     <table>
+      {errors.length > 0 &&
+        errors.map((error, index) => {
+          return (
+            <div className="alert alert-danger m-2" key={index}>
+              {error}
+            </div>
+          );
+        })}
       <thead>
         <tr>
           <th>Reservation ID</th>
@@ -39,21 +81,17 @@ function ReservationList({ reservations }) {
                 {reservation.status}
               </td>
               <td>
-                {reservation.status === "booked" ? (
+                {reservation.status === "booked" && (
                   <a
                     className="btn btn-secondary"
                     href={`/reservations/${reservation.reservation_id}/edit`}
                   >
                     Edit
                   </a>
-                ) : (
-                  ""
                 )}
               </td>
               <td>
-                {reservation.status === "seated" ? (
-                  ""
-                ) : (
+                {reservation.status === "booked" && (
                   <a
                     className="btn btn-secondary"
                     href={`/reservations/${reservation.reservation_id}/seat`}
@@ -63,11 +101,11 @@ function ReservationList({ reservations }) {
                 )}
               </td>
               <td>
-                {reservation.status !== "cancelled" && (
+                {reservation.status === "booked" && (
                   <button
                     data-reservation-id-cancel={reservation.reservation_id}
                     className="btn btn-danger"
-                    onClick={handleCancel}
+                    onClick={() => handleCancel(reservation.reservation_id)}
                   >
                     cancel {reservation.reservation_id}
                   </button>

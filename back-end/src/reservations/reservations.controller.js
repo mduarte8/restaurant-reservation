@@ -48,7 +48,7 @@ async function reservationExists(req, res, next) {
   const foundReservation = await service.readReservation(reservation_id);
   if (foundReservation) {
     res.locals.reservation = foundReservation;
-    console.log("Found reservation...");
+    console.log("Found reservation...", foundReservation);
     return next();
   }
   next({
@@ -58,6 +58,7 @@ async function reservationExists(req, res, next) {
 }
 
 function bodyDataValid(req, res, next) {
+  console.log("backend req.body", req.body.data);
   if (!req.body.data) {
     return next({
       status: 400,
@@ -129,6 +130,7 @@ function bodyDataValid(req, res, next) {
 
 function statusIsValid(req, res, next) {
   const validStatuses = ["booked", "seated", "finished", "cancelled"];
+  console.log("req.body.data is", req.body.data);
   if (res.locals.reservation.status === "finished") {
     next({
       status: 400,

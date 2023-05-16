@@ -155,13 +155,13 @@ function EditReservation() {
         handleSubmit={handleSubmit}
         history={history}
       />
-      <button
-        data-reservation-id-cancel={reservation.reservation_id - 1}
+      {/* <button
+        data-reservation-id-cancel={reservation.reservation_id}
         className="btn btn-danger"
         onClick={handleCancel}
       >
-        Cancel {reservation.reservation_id}
-      </button>
+        cancel {reservation.reservation_id}
+      </button> */}
     </main>
   );
 }
