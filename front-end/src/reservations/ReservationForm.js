@@ -15,7 +15,7 @@ function ReservationForm({ formData, handleChange, handleSubmit }) {
           onChange={handleChange}
           className="form-control"
         />
-        <label for="first_name">First Name</label>
+        <label htmlFor="first_name">First Name</label>
       </div>
       <div className="form-floating mb-3">
         <input
@@ -26,7 +26,7 @@ function ReservationForm({ formData, handleChange, handleSubmit }) {
           onChange={handleChange}
           className="form-control"
         />
-        <label for="last_name">Last Name</label>
+        <label htmlFor="last_name">Last Name</label>
       </div>
       <div className="form-floating mb-3">
         <input
@@ -40,7 +40,7 @@ function ReservationForm({ formData, handleChange, handleSubmit }) {
           className="form-control"
           required
         />
-        <label for="mobile_number">Mobile Number</label>
+        <label htmlFor="mobile_number">Mobile Number</label>
       </div>
       <div className="form-floating mb-3">
         <input
@@ -53,7 +53,7 @@ function ReservationForm({ formData, handleChange, handleSubmit }) {
           onChange={handleChange}
           className="form-control"
         />
-        <label for="reservation_date">Reservation Date</label>
+        <label htmlFor="reservation_date">Reservation Date</label>
       </div>
       <div className="form-floating mb-3">
         <input
@@ -65,7 +65,7 @@ function ReservationForm({ formData, handleChange, handleSubmit }) {
           onChange={handleChange}
           className="form-control"
         />
-        <label for="reservation_time">Reservation Time</label>
+        <label htmlFor="reservation_time">Reservation Time</label>
       </div>
       <div className="form-floating mb-3">
         <input
@@ -79,7 +79,7 @@ function ReservationForm({ formData, handleChange, handleSubmit }) {
           onChange={handleChange}
           className="form-control"
         />
-        <label for="people">Number of People</label>
+        <label htmlFor="people">Number of People</label>
       </div>
       <button type="submit" className="btn btn-primary mb-3">
         Submit

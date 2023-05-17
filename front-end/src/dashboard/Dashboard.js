@@ -116,7 +116,7 @@ function Dashboard() {
           <tbody>
             {tables.map((table, index) => {
               return (
-                <tr key={index}>
+                <tr key={table.table_id}>
                   <th scope="row">{table.table_id}</th>
                   <td>{table.table_name}</td>
                   <td>{table.capacity}</td>

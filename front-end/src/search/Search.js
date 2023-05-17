@@ -67,7 +67,7 @@ function Search() {
           );
         })}
       <form onSubmit={handleSubmit} className="form-floating">
-        <div class="form-floating">
+        <div className="form-floating">
           <input
             name="mobile_number"
             id="mobile_number"
@@ -79,7 +79,7 @@ function Search() {
             className="form-control w-25"
             required
           />
-          <label for="mobile_number">Search Phone Number</label>
+          <label htmlFor="mobile_number">Search Phone Number</label>
         </div>
         <button type="submit" className="btn btn-primary mt-2 mb-2">
           Find
