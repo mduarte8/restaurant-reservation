@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { readReservation, listTables, seatTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 /**
@@ -79,7 +79,7 @@ function ManageReservation() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const submitErrors = [];
+    // const submitErrors = [];
     const foundTable = tables.find((table) => table.table_id === selectedTable);
     if (validateInputs(foundTable)) {
       seatReservationAtTable(foundTable);
@@ -91,21 +91,21 @@ function ManageReservation() {
       <h1>Seat This Reservation!</h1>
       <ErrorAlert error={reservationError} />
       {reservation ? (
-        <table>
+        <table className="table">
           <thead>
             <tr>
-              <th>Reservation ID</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Phone #</th>
-              <th>Reservation Date</th>
-              <th>Reservation Time</th>
-              <th>Party Size</th>
+              <th scope="col">Reservation ID</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Phone #</th>
+              <th scope="col">Reservation Date</th>
+              <th scope="col">Reservation Time</th>
+              <th scope="col">Party Size</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>{reservation.reservation_id}</td>
+              <th scope="row">{reservation.reservation_id}</th>
               <td>{reservation.first_name}</td>
               <td>{reservation.last_name}</td>
               <td>{reservation.mobile_number}</td>
@@ -129,6 +129,7 @@ function ManageReservation() {
         })}
       {tables && tables.length ? (
         <form onSubmit={handleSubmit}>
+          {/* <label htmlFor="table_id">Select table to seat reservation</label> */}
           <select name="table_id" onChange={handleChange}>
             {tables.map((table, index) => {
               // first option is first table returned in tables, handled by setSelectedTables after listTables above
@@ -139,8 +140,20 @@ function ManageReservation() {
               );
             })}
           </select>
-          <button type="submit">Submit</button>
-          <button onClick={() => history.goBack()}>Cancel</button>
+          <button
+            type="submit"
+            name="submit"
+            className="btn btn-primary m-2 ml-4"
+          >
+            Submit
+          </button>
+          <button
+            name="cancel"
+            className="btn btn-secondary mr-2 mt-2 mb-2"
+            onClick={() => history.goBack()}
+          >
+            Cancel
+          </button>
         </form>
       ) : (
         <p>No tables :/</p>
