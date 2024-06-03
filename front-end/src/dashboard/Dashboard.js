@@ -50,7 +50,7 @@ function Dashboard() {
     setTablesError(null);
 
     try {
-      await delay(10000);
+      // await delay(10000);
       const reservations = await listReservations(
         { date: dateString },
         abortController.signal
