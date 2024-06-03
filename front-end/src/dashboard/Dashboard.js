@@ -5,19 +5,15 @@ import useQuery from "../utils/useQuery";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { today, previous, next } from "../utils/date-time";
 import ReservationList from "../reservations/ReservationList";
+import LoadingSpinner from "../components/LoadingSpinner"; // Import the new spinner component
 
-/**
- * Defines the dashboard page.
- * @param dateString
- *  the date in string format for which the user wants to view reservations.
- * @returns {JSX.Element}
- */
 function Dashboard() {
   const [dateString, setDateString] = useState(today());
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
+  const [loading, setLoading] = useState(false); // State for loading spinner
   const [reload, setReload] = useState(false);
   const [abortController, setAbortController] = useState(null);
 
@@ -38,24 +34,44 @@ function Dashboard() {
     };
   }, [abortController]);
 
-  useEffect(loadDashboard, [dateString, reload]);
+  useEffect(() => {
+    setLoading(true); // Show spinner when loading starts
+    loadDashboard().finally(() => setLoading(false)); // Hide spinner when loading finishes
+  }, [dateString, reload]);
 
-  function loadDashboard() {
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function loadDashboard() {
     const abortController = new AbortController();
+    setAbortController(abortController);
     setReservationsError(null);
-    listReservations({ date: dateString }, abortController.signal)
-      .then(setReservations)
-      .catch(setReservationsError);
-    listTables({}, abortController.signal)
-      .then(setTables)
-      .catch(setTablesError);
-    return () => abortController.abort();
+    setTablesError(null);
+
+    try {
+      await delay(10000);
+      const reservations = await listReservations(
+        { date: dateString },
+        abortController.signal
+      );
+      setReservations(reservations);
+      const tables = await listTables({}, abortController.signal);
+      setTables(tables);
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        setReservationsError(error);
+        setTablesError(error);
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleFinish(table_id) {
     if (
       window.confirm(
-        " Is this table ready to seat new guests? This cannot be undone."
+        "Is this table ready to seat new guests? This cannot be undone."
       )
     ) {
       const newAbortController = new AbortController();
@@ -71,6 +87,16 @@ function Dashboard() {
 
   return (
     <main>
+      <LoadingSpinner
+        visible={loading}
+        messages={[
+          "Loading...",
+          "Still loading...",
+          "Downside of using free tier...",
+          "Just a moment...",
+          "Almost there...",
+        ]}
+      />
       <h1>Dashboard</h1>
       <div className="d-md-flex mb-3 justify-content-between mt-1">
         <h4 className="d-flex justify-content-center align-items-center mb-0">
@@ -102,7 +128,7 @@ function Dashboard() {
       )}
       <h2>Tables</h2>
       <ErrorAlert error={tablesError} />
-      {tables && tables.length ? (
+      {!loading && tables && tables.length ? (
         <table className="table">
           <thead>
             <tr>
@@ -142,7 +168,7 @@ function Dashboard() {
           </tbody>
         </table>
       ) : (
-        <p>No tables :/</p>
+        !loading && <p>No tables :/</p>
       )}
     </main>
   );
