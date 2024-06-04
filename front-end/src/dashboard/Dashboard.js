@@ -37,6 +37,7 @@ function Dashboard() {
   useEffect(() => {
     setLoading(true); // Show spinner when loading starts
     loadDashboard().finally(() => setLoading(false)); // Hide spinner when loading finishes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateString, reload]);
 
   function delay(ms) {
@@ -50,7 +51,7 @@ function Dashboard() {
     setTablesError(null);
 
     try {
-      // await delay(10000);
+      await delay(10000);
       const reservations = await listReservations(
         { date: dateString },
         abortController.signal
